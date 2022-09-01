@@ -70,6 +70,7 @@ class Layer {
             let tempRGBString = RGBArrayToString(this.color);
             let tempHexString = RGBToHexString(tempRGBString);
             tempHexString = HexMaxLight(tempHexString,70);//怎样才算合适
+            tempHexString = HexMinLight(tempHexString,30);
             tempRGBString = HexToRGBString(tempHexString);
             this.color = RGBStringToArray(tempRGBString);
         }

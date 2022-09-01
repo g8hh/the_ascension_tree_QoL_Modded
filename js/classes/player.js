@@ -8,6 +8,7 @@ class Player {
         this.AutoUpgrade = {unlocked:false,activated:false,interval:0};
         this.AutoAscension = {unlocked:false,activated:false,interval:0};
         this.AutoAscension_Zero = {unlocked:false,activated:false,interval:0};
+        this.AutoAscension_More = {unlocked:false,activated:false,interval:0,multi:1000};
     }
 
     reset(seed) {
@@ -17,6 +18,7 @@ class Player {
         this.AutoUpgrade = {unlocked:false,activated:false,interval:0};
         this.AutoAscension = {unlocked:false,activated:false,interval:0};
         this.AutoAscension_Zero = {unlocked:false,activated:false,interval:0};
+        this.AutoAscension_More = {unlocked:false,activated:false,interval:0,multi:1000};
         document.getElementById("autoupgrades-toggle").disabled = !this.AutoUpgrade.unlocked;
         document.getElementById("autoupgrades-toggle").innerText = this.AutoUpgrade.unlocked ? (this.AutoUpgrade.activated?("Enabled\nCurrent: "+this.AutoUpgrade.interval+"ms"):"Disabled") :"Unlock at 1e15 Points"
         document.getElementById("autoascension-toggle").disabled = !this.AutoAscension.unlocked;
@@ -61,6 +63,7 @@ class Player {
         data.push(this.AutoUpgrade);
         data.push(this.AutoAscension);
         data.push(this.AutoAscension_Zero);
+        data.push(this.AutoAscension_More)
         return data;
     }
 
@@ -95,6 +98,7 @@ class Player {
         this.AutoUpgrade = data.length > 8 ? data[8]: {unlocked:false,activated:false,interval:0};
         this.AutoAscension = data.length > 8 ? data[9]: {unlocked:false,activated:false,interval:0};
         this.AutoAscension_Zero = data.length > 8 ? data[10]: {unlocked:false,activated:false,interval:0};
+        this.AutoAscension_More = data.length > 11 ?data[11]: {unlocked:false,activated:false,interval:0,multi:1000};
         document.getElementById("animations-toggle").innerText = this.animations ? "Enabled" : "Disabled";
         document.getElementById("singleclick-toggle").innerText = this.singleclick ? "Single Click" : "Double Click";
         if (Object.entries(zoomOptions).find(([key, value]) => value === this.zoomModifier) !== undefined)
@@ -109,6 +113,8 @@ class Player {
         document.getElementById("autoascension-toggle").innerText = this.AutoAscension.unlocked ? (this.AutoAscension.activated?("Enabled\nCurrent: "+this.AutoAscension.interval+"ms"):"Disabled") :"Unlock at 1e30 Points"
         document.getElementById("autozero-toggle").disabled = !this.AutoAscension_Zero.unlocked;
         document.getElementById("autozero-toggle").innerText = this.AutoAscension_Zero.unlocked ? (this.AutoAscension_Zero.activated?("Enabled\nCurrent: "+this.AutoAscension_Zero.interval+"ms"):"Disabled") :"Unlock at 1e45 Points"
+        document.getElementById("automore-toggle").disabled = !this.AutoAscension_More.unlocked;
+        document.getElementById("automore-toggle").innerText = this.AutoAscension_More.unlocked ? (this.AutoAscension_More.activated?("Enabled\nCurrent: "+this.AutoAscension_More.interval+"ms\nTrigger: "+this.AutoAscension_More.multi+"x"):"Disabled") :"Unlock at 1e70 Points"
 
         if (player.AutoUpgrade.activated){
             AutoUpgradeInterval = setInterval(() => {
@@ -146,6 +152,20 @@ class Player {
             }, player.AutoAscension_Zero.interval)
         }
         else clearInterval(AutoZeroInterval);
+
+        if (player.AutoAscension_More.activated){
+            AutoMoreInterval = setInterval(() => {
+                let foundbool = false;
+                for (let layer in player.layers)
+                    if (player.layers[layer].points.times(player.AutoAscension_More.multi).lte(player.layers[layer].prestigeGain())&&!player.layers[layer].right_branch)
+                    {
+                        player.layers[layer].selectLayer();
+                        foundbool = true;
+                        break;
+                    };
+                if (foundbool) player.current_layer.prestige();
+            },player.AutoAscension_More.interval)
+        }
 
         requestAnimationFrame(() => {
             this.current_layer.selectLayer(true, true);

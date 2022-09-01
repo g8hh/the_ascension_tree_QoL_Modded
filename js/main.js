@@ -2,6 +2,7 @@ var player = new Player();
 var AutoUpgradeInterval;
 var AutoAscensionInterval;
 var AutoZeroInterval;
+var AutoMoreInterval
 
 let last_local_save = -1;
 
@@ -133,7 +134,7 @@ document.getElementById("autoascension-toggle").addEventListener("click",() => {
 });
 
 document.getElementById("autozero-toggle").addEventListener("click",() => {
-    let mininterval = new Decimal(5*60*1000).div(player.layers[0].points.max(1).log10().sub(45).pow(0.9).max(1));
+    let mininterval = new Decimal(7.5*60*1000).div(player.layers[0].points.max(1).log10().sub(45).pow(0.9).max(1));
     mininterval = Math.max(Math.round(mininterval.toNumber()),1000);
     const input = window.prompt("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Auto Ascension for non-generation layers.\nCurrently min interval: "+mininterval+"ms")
     if (input === ""){
@@ -167,6 +168,49 @@ document.getElementById("autozero-toggle").addEventListener("click",() => {
         }, player.AutoAscension_Zero.interval)
     }
     else clearInterval(AutoZeroInterval);
+});
+
+document.getElementById("automore-toggle").addEventListener("click",() => {
+    let mininterval = new Decimal(10*60*1000).div(player.layers[0].points.max(1).log10().sub(70).pow(0.85).max(1));
+    mininterval = Math.max(Math.round(mininterval.toNumber()),1000);
+    const input = window.prompt("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Auto Ascension for non-generation layers.\nCurrently min interval: "+mininterval+"ms")
+    if (input === ""){
+        player.AutoAscension_More.interval = mininterval;
+        player.AutoAscension_More.activated = true;
+    } else {
+        const inputNumber = parseInt(input);
+        if (inputNumber <= 0){
+            player.AutoAscension_More.interval = 0;
+            player.AutoAscension_More.activated = false;
+        } else if (inputNumber !== NaN) {
+            player.AutoAscension_More.interval = Math.max(inputNumber,mininterval);;
+            player.AutoAscension_More.activated = true;
+        }
+    }
+    const multiinput = window.prompt("Input trigger mult. At least 1.")
+    if (multiinput === "") player.AutoAscension_More.multi = 1000;
+    else{
+        const multinum = parseInt(multiinput)
+        if (multinum!==NaN) player.AutoAscension_More.multi = Math.max(multinum,1);
+    }
+
+    document.getElementById("automore-toggle").disabled = !player.AutoAscension_More.unlocked;
+    document.getElementById("automore-toggle").innerText = player.AutoAscension_More.unlocked ? (player.AutoAscension_More.activated?("Enabled\nCurrent: "+player.AutoAscension_More.interval+"ms\nTrigger: "+player.AutoAscension_More.multi+"x"):"Disabled") :"Unlock at 1e70 Points"
+
+    if (player.AutoAscension_More.activated){
+        AutoMoreInterval = setInterval(() => {
+            let foundbool = false;
+            for (let layer in player.layers)
+                if (player.layers[layer].points.times(player.AutoAscension_More.multi).lte(player.layers[layer].prestigeGain())&&!player.layers[layer].right_branch)
+                {
+                    player.layers[layer].selectLayer();
+                    foundbool = true;
+                    break;
+                };
+            if (foundbool) player.current_layer.prestige();
+        }, player.AutoAscension_More.interval)
+    }
+    else clearInterval(AutoMoreInterval);
 });
 
 document.addEventListener('keydown', e => {
