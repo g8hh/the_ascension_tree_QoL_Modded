@@ -1,4 +1,7 @@
 var player = new Player();
+var AutoUpgradeInterval;
+var AutoAscensionInterval;
+var AutoZeroInterval;
 
 let last_local_save = -1;
 
@@ -61,6 +64,109 @@ document.getElementById("hard-reset").addEventListener("click", () => {
             hard_reset(Math.floor(inputNumber));
         }
     }
+});
+
+document.getElementById("autoupgrades-toggle").addEventListener("click", () => {
+    let mininterval = new Decimal(60000).div(player.layers[0].points.max(1).log10().sub(15).max(1));
+    mininterval = Math.max(Math.round(mininterval.toNumber()),100);
+    const input = window.prompt("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Autobuyer.\nCurrently min interval: "+mininterval+"ms")
+    if (input === ""){
+        player.AutoUpgrade.interval = mininterval;
+        player.AutoUpgrade.activated = true;
+    } else {
+        const inputNumber = parseInt(input);
+        if (inputNumber <= 0){
+            player.AutoUpgrade.interval = 0;
+            player.AutoUpgrade.activated = false;
+        } else if (inputNumber !== NaN) {
+            player.AutoUpgrade.interval = inputNumber;
+            player.AutoUpgrade.activated = true;
+        }
+    }
+
+    document.getElementById("autoupgrades-toggle").disabled = !player.AutoUpgrade.unlocked;
+    document.getElementById("autoupgrades-toggle").innerText = player.AutoUpgrade.unlocked ? (player.AutoUpgrade.activated?("Enabled\nCurrent: "+player.AutoUpgrade.interval+"ms"):"Disabled") :"Unlock at 1e15 Points"
+
+    if (player.AutoUpgrade.activated){
+        AutoUpgradeInterval = setInterval(() => {
+            let node = document.querySelector(".purchaseAvailable");
+            if (!node) return;
+            node.click();
+            player.current_layer.buyLeft();
+            player.current_layer.buyRight();
+            document.querySelectorAll(".upgrade:not(.complete):not(:disabled)").forEach(n => n.click());
+        }, player.AutoUpgrade.interval)
+    }
+    else clearInterval(AutoUpgradeInterval);
+});
+
+document.getElementById("autoascension-toggle").addEventListener("click",() => {
+    let mininterval = new Decimal(5*60*1000).div(player.layers[0].points.max(1).log10().sub(30).pow(0.95).max(1));
+    mininterval = Math.max(Math.round(mininterval.toNumber()),500);
+    const input = window.prompt("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Auto Ascension.\nCurrently min interval: "+mininterval+"ms")
+    if (input === ""){
+        player.AutoAscension.interval = mininterval;
+        player.AutoAscension.activated = true;
+    } else {
+        const inputNumber = parseInt(input);
+        if (inputNumber <= 0){
+            player.AutoAscension.interval = 0;
+            player.AutoAscension.activated = false;
+        } else if (inputNumber !== NaN) {
+            player.AutoAscension.interval = inputNumber;
+            player.AutoAscension.activated = true;
+        }
+    }
+
+    document.getElementById("autoascension-toggle").disabled = !player.AutoAscension.unlocked;
+    document.getElementById("autoascension-toggle").innerText = player.AutoAscension.unlocked ? (player.AutoAscension.activated?("Enabled\nCurrent: "+player.AutoAscension.interval+"ms"):"Disabled") :"Unlock at 1e30 Points"
+
+    if (player.AutoAscension.activated){
+        AutoAscensionInterval = setInterval(() => {
+            let node = document.querySelector(".ascensionAvailable");
+            if (!node) return;
+            node.click();
+            player.current_layer.prestige();
+        }, player.AutoAscension.interval)
+    }
+    else clearInterval(AutoAscensionInterval);
+});
+
+document.getElementById("autozero-toggle").addEventListener("click",() => {
+    let mininterval = new Decimal(5*60*1000).div(player.layers[0].points.max(1).log10().sub(45).pow(0.9).max(1));
+    mininterval = Math.max(Math.round(mininterval.toNumber()),1000);
+    const input = window.prompt("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Auto Ascension for non-generation layers.\nCurrently min interval: "+mininterval+"ms")
+    if (input === ""){
+        player.AutoAscension_Zero.interval = mininterval;
+        player.AutoAscension_Zero.activated = true;
+    } else {
+        const inputNumber = parseInt(input);
+        if (inputNumber <= 0){
+            player.AutoAscension_Zero.interval = 0;
+            player.AutoAscension_Zero.activated = false;
+        } else if (inputNumber !== NaN) {
+            player.AutoAscension_Zero.interval = inputNumber;
+            player.AutoAscension_Zero.activated = true;
+        }
+    }
+
+    document.getElementById("autozero-toggle").disabled = !player.AutoAscension_Zero.unlocked;
+    document.getElementById("autozero-toggle").innerText = player.AutoAscension_Zero.unlocked ? (player.AutoAscension_Zero.activated?("Enabled\nCurrent: "+player.AutoAscension_Zero.interval+"ms"):"Disabled") :"Unlock at 1e45 Points"
+
+    if (player.AutoAscension_Zero.activated){
+        AutoZeroInterval = setInterval(() => {
+            let foundbool = false;
+            for (let layer in player.layers)
+                if (player.layers[layer].calculateProduction().lte(0)&&player.layers[layer].canPrestige())
+                {
+                    player.layers[layer].selectLayer();
+                    foundbool = true;
+                    break;
+                };
+            if (foundbool) player.current_layer.prestige();
+        }, player.AutoAscension_Zero.interval)
+    }
+    else clearInterval(AutoZeroInterval);
 });
 
 document.addEventListener('keydown', e => {

@@ -58,7 +58,21 @@ class Layer {
         this.rng = sfc32(this.depth, this.coord, seed, 0xDEADBEEF);
         for (let i = 0; i < 15; i++) this.rng();
 
-        if (parent_layer != undefined) this.points_name = choose(ITY_WORDS, this.rng);
+        if (parent_layer != undefined) {
+            this.points_name = choose(ITY_WORDS, this.rng);
+            //random more color!
+            let tempcolormodifier = [-128,-128,-128]
+            for (let i = 0; i < 3;i++)
+            tempcolormodifier[i] += Math.round(this.rng()*256);
+            for (let index in this.color)
+            this.color[index] = Math.max(0,Math.min(this.color[index]+tempcolormodifier[index],255));
+            //color mixing
+            let tempRGBString = RGBArrayToString(this.color);
+            let tempHexString = RGBToHexString(tempRGBString);
+            tempHexString = HexMaxLight(tempHexString,75);
+            tempRGBString = HexToRGBString(tempHexString);
+            this.color = RGBStringToArray(tempRGBString);
+        }
 
         this.el = document.createElement("div");
         this.el.className = "tree-node-container";
