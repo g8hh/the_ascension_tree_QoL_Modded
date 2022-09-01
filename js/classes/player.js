@@ -63,12 +63,15 @@ class Player {
         data.push(this.AutoUpgrade);
         data.push(this.AutoAscension);
         data.push(this.AutoAscension_Zero);
-        data.push(this.AutoAscension_More)
+        data.push(this.AutoAscension_More);
         return data;
     }
 
     load(data) {
-        clearInterval();
+        clearInterval(AutoUpgradeInterval);
+        clearInterval(AutoAscensionInterval);
+        clearInterval(AutoZeroInterval);
+        clearInterval(AutoMoreInterval);
         this.last_time_ts = data[0];
         
         if (data.length > 7) {
