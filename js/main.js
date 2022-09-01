@@ -201,7 +201,7 @@ document.getElementById("automore-toggle").addEventListener("click",() => {
         AutoMoreInterval = setInterval(() => {
             let foundbool = false;
             for (let layer in player.layers)
-                if (player.layers[layer].points.times(player.AutoAscension_More.multi).lte(player.layers[layer].prestigeGain())&&!player.layers[layer].right_branch)
+                if (player.layers[layer].points.times(player.AutoAscension_More.multi).lt(player.layers[layer].prestigeGain())&&!player.layers[layer].right_branch)
                 {
                     player.layers[layer].selectLayer();
                     foundbool = true;
