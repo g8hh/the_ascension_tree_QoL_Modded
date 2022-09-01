@@ -11,10 +11,18 @@ class Player {
     }
 
     reset(seed) {
-        clearInterval();
+        clearInterval(AutoAscensionInterval);
+        clearInterval(AutoUpgradeInterval);
+        clearInterval(AutoZeroInterval);
         this.AutoUpgrade = {unlocked:false,activated:false,interval:0};
         this.AutoAscension = {unlocked:false,activated:false,interval:0};
         this.AutoAscension_Zero = {unlocked:false,activated:false,interval:0};
+        document.getElementById("autoupgrades-toggle").disabled = !this.AutoUpgrade.unlocked;
+        document.getElementById("autoupgrades-toggle").innerText = this.AutoUpgrade.unlocked ? (this.AutoUpgrade.activated?("Enabled\nCurrent: "+this.AutoUpgrade.interval+"ms"):"Disabled") :"Unlock at 1e15 Points"
+        document.getElementById("autoascension-toggle").disabled = !this.AutoAscension.unlocked;
+        document.getElementById("autoascension-toggle").innerText = this.AutoAscension.unlocked ? (this.AutoAscension.activated?("Enabled\nCurrent: "+this.AutoAscension.interval+"ms"):"Disabled") :"Unlock at 1e30 Points"
+        document.getElementById("autozero-toggle").disabled = !this.AutoAscension_Zero.unlocked;
+        document.getElementById("autozero-toggle").innerText = this.AutoAscension_Zero.unlocked ? (this.AutoAscension_Zero.activated?("Enabled\nCurrent: "+this.AutoAscension_Zero.interval+"ms"):"Disabled") :"Unlock at 1e45 Points"
         this.last_time_ts = Date.now();
 
         this.seed = seed || Math.floor(Math.random() * 4294967296);
