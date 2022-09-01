@@ -120,55 +120,64 @@ class Player {
         document.getElementById("automore-toggle").innerText = this.AutoAscension_More.unlocked ? (this.AutoAscension_More.activated?("Enabled\nCurrent: "+this.AutoAscension_More.interval+"ms\nTrigger: "+this.AutoAscension_More.multi+"x"):"Disabled") :"Unlock at 1e70 Points"
 
         if (player.AutoUpgrade.activated){
+            clearInterval(AutoUpgradeInterval);
             AutoUpgradeInterval = setInterval(() => {
                 let node = document.querySelector(".purchaseAvailable");
                 if (!node) return;
-                node.click();
-                player.current_layer.buyLeft();
-                player.current_layer.buyRight();
-                document.querySelectorAll(".upgrade:not(.complete):not(:disabled)").forEach(n => n.click());
+                for (let layer in player.layers)
+                    if (player.layers[layer].nodeEl == node)
+                    {
+                        player.layers[layer].buyLeft();
+                        player.layers[layer].buyRight();
+                        for (let upg in player.layers[layer].upgrades)
+                            if (!player.layers[layer].upgrades[upg].bought&&player.layers[layer].upgrades[upg].canBuy())
+                            player.layers[layer].upgrades[upg].buy();
+                    }
+                
             }, player.AutoUpgrade.interval)
         }
         else clearInterval(AutoUpgradeInterval);
 
         if (player.AutoAscension.activated){
+            clearInterval(AutoAscensionInterval);
             AutoAscensionInterval = setInterval(() => {
                 let node = document.querySelector(".ascensionAvailable");
                 if (!node) return;
-                node.click();
-                player.current_layer.prestige();
+                for (let layer in player.layers)
+                    if (player.layers[layer].nodeEl == node)
+                    {
+                        player.layers[layer].prestige();
+                        break;
+                    }
             }, player.AutoAscension.interval)
         }
         else clearInterval(AutoAscensionInterval);
 
         if (player.AutoAscension_Zero.activated){
+            clearInterval(AutoZeroInterval);
             AutoZeroInterval = setInterval(() => {
-                let foundbool = false;
                 for (let layer in player.layers)
                     if (player.layers[layer].calculateProduction().lte(0)&&player.layers[layer].canPrestige())
                     {
-                        player.layers[layer].selectLayer();
-                        foundbool = true;
+                        player.layers[layer].prestige();
                         break;
                     };
-                if (foundbool) player.current_layer.prestige();
             }, player.AutoAscension_Zero.interval)
         }
         else clearInterval(AutoZeroInterval);
 
         if (player.AutoAscension_More.activated){
+            clearInterval(AutoMoreInterval);
             AutoMoreInterval = setInterval(() => {
-                let foundbool = false;
                 for (let layer in player.layers)
                     if (player.layers[layer].points.times(player.AutoAscension_More.multi).lt(player.layers[layer].prestigeGain())&&!player.layers[layer].right_branch)
                     {
-                        player.layers[layer].selectLayer();
-                        foundbool = true;
+                        player.layers[layer].prestige();
                         break;
                     };
-                if (foundbool) player.current_layer.prestige();
             },player.AutoAscension_More.interval)
         }
+        else clearInterval(AutoMoreInterval);
 
         requestAnimationFrame(() => {
             this.current_layer.selectLayer(true, true);

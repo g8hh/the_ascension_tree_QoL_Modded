@@ -73,17 +73,17 @@
                 <span class="settings">Focus zoom modifier:<input type="range" min="-3" max="3" value="0" class="slider" id="zoomModifier"></span>
                 <span class="settings">Animations:<button id="animations-toggle">Enabled</button></span>
                 <span class="settings">Focus layer on:<button id="singleclick-toggle">Double Click</button></span>
-                <span class="settings">Auto buy upgrades:<button id="autoupgrades-toggle">Unlock at 1e15 Points</button></span>
-                <span class="settings">Auto ascend when next upgrade avaliable:<button id="autoascension-toggle">Unlock at 1e30 Points</button></span>
-                <span class="settings">Auto ascend when no layer currency gaining:<button id="autozero-toggle">Unlock at 1e45 Points</button></span>
-                <span class="settings">Auto ascend when more prestige gain:<button id="automore-toggle">Unlock at 1e70 Points</button></span>
+                <span class="settings">Auto buy upgrades:<button id="autoupgrades-toggle" disabled="true">Unlock at 1e15 Points</button></span>
+                <span class="settings">Auto ascend when next upgrade avaliable:<button id="autoascension-toggle" disabled="true">Unlock at 1e30 Points</button></span>
+                <span class="settings">Auto ascend when no layer currency gaining:<button id="autozero-toggle" disabled="true">Unlock at 1e45 Points</button></span>
+                <span class="settings">Auto ascend when more prestige gain:<button id="automore-toggle" disabled="true">Unlock at 1e70 Points</button></span>
                 <span class='button-row'>
                     <button id="export" class="settings" onclick="openModal('export_modal'); document.getElementById('export_save').value = btoa(JSON.stringify(player.save()))">Export</button>
                     <button id="import" class="settings" onclick="openModal('import_modal'); document.getElementById('import_save').value = ''">Import</button>
                 </span>
                 <span class="settings" id="seedDisplay">Seed: </span>
                 <button id="hard-reset" class="settings">Hard Reset</button>
-                <p>Version 2022-09-01</p>
+                <p>Version 2022-09-02</p>
             </span>
             <div class="main-container">
                 <div id="tree-container">
