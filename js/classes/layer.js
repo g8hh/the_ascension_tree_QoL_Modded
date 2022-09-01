@@ -69,7 +69,7 @@ class Layer {
             //color mixing
             let tempRGBString = RGBArrayToString(this.color);
             let tempHexString = RGBToHexString(tempRGBString);
-            tempHexString = HexMaxLight(tempHexString,75);
+            tempHexString = HexMaxLight(tempHexString,70);//怎样才算合适
             tempRGBString = HexToRGBString(tempHexString);
             this.color = RGBStringToArray(tempRGBString);
         }
