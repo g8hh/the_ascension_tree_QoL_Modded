@@ -95,13 +95,13 @@ document.getElementById("autoupgrades-toggle").addEventListener("click", () => {
             if (!node) return;
             for (let layer in player.layers) {
                 let intlayer = parseInt(layer)
-                if (player.layers[(intlayer + player.last_auto_id) % player.layers.length].nodeEl == node) {
-                    player.layers[(intlayer + player.last_auto_id) % player.layers.length].buyLeft();
-                    player.layers[(intlayer + player.last_auto_id) % player.layers.length].buyRight();
-                    for (let upg in player.layers[(intlayer + player.last_auto_id) % player.layers.length].upgrades)
-                        if (!player.layers[(intlayer + player.last_auto_id) % player.layers.length].upgrades[upg].bought && player.layers[(intlayer + player.last_auto_id) % player.layers.length].upgrades[upg].canBuy())
-                            player.layers[(intlayer + player.last_auto_id) % player.layers.length].upgrades[upg].buy();
-                    player.last_auto_id = (intlayer + player.last_auto_id) % player.layers.length;
+                if (player.layers[(intlayer + player.last_auto_id_upg) % player.layers.length].nodeEl == node) {
+                    player.layers[(intlayer + player.last_auto_id_upg) % player.layers.length].buyLeft();
+                    player.layers[(intlayer + player.last_auto_id_upg) % player.layers.length].buyRight();
+                    for (let upg in player.layers[(intlayer + player.last_auto_id_upg) % player.layers.length].upgrades)
+                        if (!player.layers[(intlayer + player.last_auto_id_upg) % player.layers.length].upgrades[upg].bought && player.layers[(intlayer + player.last_auto_id_upg) % player.layers.length].upgrades[upg].canBuy())
+                            player.layers[(intlayer + player.last_auto_id_upg) % player.layers.length].upgrades[upg].buy();
+                    player.last_auto_id_upg = (intlayer + player.last_auto_id_upg) % player.layers.length;
                     break;
                 }
             }
@@ -138,9 +138,9 @@ document.getElementById("autoascension-toggle").addEventListener("click",() => {
             if (!node) return;
             for (let layer in player.layers) {
                 let intlayer = parseInt(layer)
-                if (player.layers[(intlayer + player.last_auto_id) % player.layers.length].nodeEl == node) {
-                    player.layers[(intlayer + player.last_auto_id) % player.layers.length].prestige();
-                    player.last_auto_id = (intlayer + player.last_auto_id) % player.layers.length;
+                if (player.layers[(intlayer + player.last_auto_id_asc) % player.layers.length].nodeEl == node) {
+                    player.layers[(intlayer + player.last_auto_id_asc) % player.layers.length].prestige();
+                    player.last_auto_id_asc = (intlayer + player.last_auto_id_asc) % player.layers.length;
                     break;
                 }
             }
@@ -175,9 +175,9 @@ document.getElementById("autozero-toggle").addEventListener("click",() => {
         AutoZeroInterval = setInterval(() => {
             for (let layer in player.layers) {
                 let intlayer = parseInt(layer)
-                if (player.layers[(intlayer + player.last_auto_id) % player.layers.length].calculateProduction().lte(0) && player.layers[(intlayer + player.last_auto_id) % player.layers.length].canPrestige()) {
-                    player.layers[(intlayer + player.last_auto_id) % player.layers.length].prestige();
-                    player.last_auto_id = (intlayer + player.last_auto_id) % player.layers.length;
+                if (player.layers[(intlayer + player.last_auto_id_zero) % player.layers.length].calculateProduction().lte(0) && player.layers[(intlayer + player.last_auto_id_zero) % player.layers.length].canPrestige()) {
+                    player.layers[(intlayer + player.last_auto_id_zero) % player.layers.length].prestige();
+                    player.last_auto_id_zero = (intlayer + player.last_auto_id_zero) % player.layers.length;
                     break;
                 }
             };
@@ -216,9 +216,9 @@ document.getElementById("automore-toggle").addEventListener("click",() => {
         AutoMoreInterval = setInterval(() => {
             for (let layer in player.layers) {
                 let intlayer = parseInt(layer)
-                if (player.layers[(intlayer + player.last_auto_id) % player.layers.length].points.times(player.AutoAscension_More.multi).lt(player.layers[(intlayer + player.last_auto_id) % player.layers.length].prestigeGain()) && !player.layers[(intlayer + player.last_auto_id) % player.layers.length].right_branch) {
-                    player.layers[(intlayer + player.last_auto_id) % player.layers.length].prestige();
-                    player.last_auto_id = (intlayer + player.last_auto_id) % player.layers.length;
+                if (player.layers[(intlayer + player.last_auto_id_more) % player.layers.length].points.times(player.AutoAscension_More.multi).lt(player.layers[(intlayer + player.last_auto_id_more) % player.layers.length].prestigeGain()) && !player.layers[(intlayer + player.last_auto_id_more) % player.layers.length].right_branch) {
+                    player.layers[(intlayer + player.last_auto_id_more) % player.layers.length].prestige();
+                    player.last_auto_id_more = (intlayer + player.last_auto_id_more) % player.layers.length;
                     break;
                 }
             };
