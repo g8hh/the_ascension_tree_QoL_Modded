@@ -79,7 +79,7 @@ document.getElementById("autoupgrades-toggle").addEventListener("click", () => {
         if (inputNumber <= 0){
             player.AutoUpgrade.interval = 0;
             player.AutoUpgrade.activated = false;
-        } else if (inputNumber !== NaN) {
+        } else if (!isNaN(inputNumber)) {
             player.AutoUpgrade.interval = Math.max(inputNumber,mininterval);
             player.AutoUpgrade.activated = true;
         }
@@ -122,7 +122,7 @@ document.getElementById("autoascension-toggle").addEventListener("click",() => {
         if (inputNumber <= 0){
             player.AutoAscension.interval = 0;
             player.AutoAscension.activated = false;
-        } else if (inputNumber !== NaN) {
+        } else if (!isNaN(inputNumber)) {
             player.AutoAscension.interval = Math.max(inputNumber,mininterval);;
             player.AutoAscension.activated = true;
         }
@@ -161,7 +161,7 @@ document.getElementById("autozero-toggle").addEventListener("click",() => {
         if (inputNumber <= 0){
             player.AutoAscension_Zero.interval = 0;
             player.AutoAscension_Zero.activated = false;
-        } else if (inputNumber !== NaN) {
+        } else if (!isNaN(inputNumber)) {
             player.AutoAscension_Zero.interval = Math.max(inputNumber,mininterval);;
             player.AutoAscension_Zero.activated = true;
         }
