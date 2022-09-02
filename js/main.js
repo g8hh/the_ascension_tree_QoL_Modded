@@ -200,7 +200,7 @@ document.getElementById("automore-toggle").addEventListener("click",() => {
     const multiinput = window.prompt("Input trigger mult. At least 1.")
     if (multiinput === "") player.AutoAscension_More.multi = 1000;
     else{
-        const multinum = parseInt(multiinput)
+        const multinum = parseFloat(multiinput)
         if (multinum!==NaN) player.AutoAscension_More.multi = Math.max(multinum,1);
     }
 
