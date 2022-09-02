@@ -5,10 +5,10 @@ class Player {
         this.animations = true;
         this.singleclick = false;
         this.zoomModifier = 0.5;
-        this.AutoUpgrade = {unlocked:false,activated:false,interval:0};
-        this.AutoAscension = {unlocked:false,activated:false,interval:0};
-        this.AutoAscension_Zero = {unlocked:false,activated:false,interval:0};
-        this.AutoAscension_More = {unlocked:false,activated:false,interval:0,multi:1000};
+        this.AutoUpgrade = { unlocked: false, activated: false, interval: 0 };
+        this.AutoAscension = { unlocked: false, activated: false, interval: 0 };
+        this.AutoAscension_Zero = { unlocked: false, activated: false, interval: 0 };
+        this.AutoAscension_More = { unlocked: false, activated: false, interval: 0, multi: 1000 };
         this.last_auto_id = 0;
     }
 
@@ -17,26 +17,26 @@ class Player {
         clearInterval(AutoUpgradeInterval);
         clearInterval(AutoZeroInterval);
         clearInterval(AutoMoreInterval);
-        this.AutoUpgrade = {unlocked:false,activated:false,interval:0};
-        this.AutoAscension = {unlocked:false,activated:false,interval:0};
-        this.AutoAscension_Zero = {unlocked:false,activated:false,interval:0};
-        this.AutoAscension_More = {unlocked:false,activated:false,interval:0,multi:1000};
+        this.AutoUpgrade = { unlocked: false, activated: false, interval: 0 };
+        this.AutoAscension = { unlocked: false, activated: false, interval: 0 };
+        this.AutoAscension_Zero = { unlocked: false, activated: false, interval: 0 };
+        this.AutoAscension_More = { unlocked: false, activated: false, interval: 0, multi: 1000 };
         this.last_auto_id = 0;
         document.getElementById("autoupgrades-toggle").disabled = !this.AutoUpgrade.unlocked;
-        document.getElementById("autoupgrades-toggle").innerText = this.AutoUpgrade.unlocked ? (this.AutoUpgrade.activated?("Enabled\nCurrent: "+this.AutoUpgrade.interval+"ms"):"Disabled") :"Unlock at 1e15 Points"
+        document.getElementById("autoupgrades-toggle").innerText = this.AutoUpgrade.unlocked ? (this.AutoUpgrade.activated ? ("Enabled\nCurrent: " + this.AutoUpgrade.interval + "ms") : "Disabled") : "Unlock at 1e15 Points"
         document.getElementById("autoascension-toggle").disabled = !this.AutoAscension.unlocked;
-        document.getElementById("autoascension-toggle").innerText = this.AutoAscension.unlocked ? (this.AutoAscension.activated?("Enabled\nCurrent: "+this.AutoAscension.interval+"ms"):"Disabled") :"Unlock at 1e30 Points"
+        document.getElementById("autoascension-toggle").innerText = this.AutoAscension.unlocked ? (this.AutoAscension.activated ? ("Enabled\nCurrent: " + this.AutoAscension.interval + "ms") : "Disabled") : "Unlock at 1e30 Points"
         document.getElementById("autozero-toggle").disabled = !this.AutoAscension_Zero.unlocked;
-        document.getElementById("autozero-toggle").innerText = this.AutoAscension_Zero.unlocked ? (this.AutoAscension_Zero.activated?("Enabled\nCurrent: "+this.AutoAscension_Zero.interval+"ms"):"Disabled") :"Unlock at 1e45 Points"
+        document.getElementById("autozero-toggle").innerText = this.AutoAscension_Zero.unlocked ? (this.AutoAscension_Zero.activated ? ("Enabled\nCurrent: " + this.AutoAscension_Zero.interval + "ms") : "Disabled") : "Unlock at 1e45 Points"
         document.getElementById("automore-toggle").disabled = !this.AutoAscension_More.unlocked;
-        document.getElementById("automore-toggle").innerText = this.AutoAscension_More.unlocked ? (this.AutoAscension_More.activated?("Enabled\nCurrent: "+this.AutoAscension_More.interval+"ms\nTrigger: "+this.AutoAscension_More.multi+"x"):"Disabled") :"Unlock at 1e70 Points"
+        document.getElementById("automore-toggle").innerText = this.AutoAscension_More.unlocked ? (this.AutoAscension_More.activated ? ("Enabled\nCurrent: " + this.AutoAscension_More.interval + "ms\nTrigger: " + this.AutoAscension_More.multi + "x") : "Disabled") : "Unlock at 1e70 Points"
         this.last_time_ts = Date.now();
 
         this.seed = seed || Math.floor(Math.random() * 4294967296);
         this.incompleteSeed = false;
         document.getElementById("seedDisplay").innerText = `Seed: ${this.seed}`;
         document.getElementById("seedDisplay").className = '';
-        
+
         if (this.layers) {
             for (let layer of this.layers) {
                 layer.el.remove();
@@ -78,7 +78,7 @@ class Player {
         clearInterval(AutoZeroInterval);
         clearInterval(AutoMoreInterval);
         this.last_time_ts = data[0];
-        
+
         if (data.length > 7) {
             this.seed = data[6];
             this.incompleteSeed = data[7];
@@ -103,10 +103,10 @@ class Player {
         this.animations = data.length > 3 ? data[3] : true;
         this.singleclick = data.length > 4 ? data[4] : false;
         this.zoomModifier = data.length > 5 ? data[5] : 0.5;
-        this.AutoUpgrade = data.length > 8 ? data[8]: {unlocked:false,activated:false,interval:0};
-        this.AutoAscension = data.length > 8 ? data[9]: {unlocked:false,activated:false,interval:0};
-        this.AutoAscension_Zero = data.length > 8 ? data[10]: {unlocked:false,activated:false,interval:0};
-        this.AutoAscension_More = data.length > 11 ?data[11]: {unlocked:false,activated:false,interval:0,multi:1000};
+        this.AutoUpgrade = data.length > 8 ? data[8] : { unlocked: false, activated: false, interval: 0 };
+        this.AutoAscension = data.length > 8 ? data[9] : { unlocked: false, activated: false, interval: 0 };
+        this.AutoAscension_Zero = data.length > 8 ? data[10] : { unlocked: false, activated: false, interval: 0 };
+        this.AutoAscension_More = data.length > 11 ? data[11] : { unlocked: false, activated: false, interval: 0, multi: 1000 };
         document.getElementById("animations-toggle").innerText = this.animations ? "Enabled" : "Disabled";
         document.getElementById("singleclick-toggle").innerText = this.singleclick ? "Single Click" : "Double Click";
         if (Object.entries(zoomOptions).find(([key, value]) => value === this.zoomModifier) !== undefined)
@@ -116,76 +116,79 @@ class Player {
         document.getElementById("seedDisplay").className = this.incompleteSeed ? 'incompleteSeed' : '';
 
         document.getElementById("autoupgrades-toggle").disabled = !this.AutoUpgrade.unlocked;
-        document.getElementById("autoupgrades-toggle").innerText = this.AutoUpgrade.unlocked ? (this.AutoUpgrade.activated?("Enabled\nCurrent: "+this.AutoUpgrade.interval+"ms"):"Disabled") :"Unlock at 1e15 Points"
+        document.getElementById("autoupgrades-toggle").innerText = this.AutoUpgrade.unlocked ? (this.AutoUpgrade.activated ? ("Enabled\nCurrent: " + this.AutoUpgrade.interval + "ms") : "Disabled") : "Unlock at 1e15 Points"
         document.getElementById("autoascension-toggle").disabled = !this.AutoAscension.unlocked;
-        document.getElementById("autoascension-toggle").innerText = this.AutoAscension.unlocked ? (this.AutoAscension.activated?("Enabled\nCurrent: "+this.AutoAscension.interval+"ms"):"Disabled") :"Unlock at 1e30 Points"
+        document.getElementById("autoascension-toggle").innerText = this.AutoAscension.unlocked ? (this.AutoAscension.activated ? ("Enabled\nCurrent: " + this.AutoAscension.interval + "ms") : "Disabled") : "Unlock at 1e30 Points"
         document.getElementById("autozero-toggle").disabled = !this.AutoAscension_Zero.unlocked;
-        document.getElementById("autozero-toggle").innerText = this.AutoAscension_Zero.unlocked ? (this.AutoAscension_Zero.activated?("Enabled\nCurrent: "+this.AutoAscension_Zero.interval+"ms"):"Disabled") :"Unlock at 1e45 Points"
+        document.getElementById("autozero-toggle").innerText = this.AutoAscension_Zero.unlocked ? (this.AutoAscension_Zero.activated ? ("Enabled\nCurrent: " + this.AutoAscension_Zero.interval + "ms") : "Disabled") : "Unlock at 1e45 Points"
         document.getElementById("automore-toggle").disabled = !this.AutoAscension_More.unlocked;
-        document.getElementById("automore-toggle").innerText = this.AutoAscension_More.unlocked ? (this.AutoAscension_More.activated?("Enabled\nCurrent: "+this.AutoAscension_More.interval+"ms\nTrigger: "+this.AutoAscension_More.multi+"x"):"Disabled") :"Unlock at 1e70 Points"
+        document.getElementById("automore-toggle").innerText = this.AutoAscension_More.unlocked ? (this.AutoAscension_More.activated ? ("Enabled\nCurrent: " + this.AutoAscension_More.interval + "ms\nTrigger: " + this.AutoAscension_More.multi + "x") : "Disabled") : "Unlock at 1e70 Points"
 
-        if (player.AutoUpgrade.activated){
+        if (player.AutoUpgrade.activated) {
             clearInterval(AutoUpgradeInterval);
             AutoUpgradeInterval = setInterval(() => {
                 let node = document.querySelector(".purchaseAvailable");
                 if (!node) return;
-                for (let layer in player.layers)
-                    if (player.layers[(layer+player.last_auto_id)%player.layers.length].nodeEl == node)
-                    {
-                        player.layers[(layer+player.last_auto_id)%player.layers.length].buyLeft();
-                        player.layers[(layer+player.last_auto_id)%player.layers.length].buyRight();
-                        for (let upg in player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades)
-                            if (!player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades[upg].bought&&player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades[upg].canBuy())
-                            player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades[upg].buy();
-                        player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
+                for (let layer in player.layers) {
+                    let intlayer = parseInt(layer)
+                    if (player.layers[(intlayer + player.last_auto_id) % player.layers.length].nodeEl == node) {
+                        player.layers[(intlayer + player.last_auto_id) % player.layers.length].buyLeft();
+                        player.layers[(intlayer + player.last_auto_id) % player.layers.length].buyRight();
+                        for (let upg in player.layers[(intlayer + player.last_auto_id) % player.layers.length].upgrades)
+                            if (!player.layers[(intlayer + player.last_auto_id) % player.layers.length].upgrades[upg].bought && player.layers[(intlayer + player.last_auto_id) % player.layers.length].upgrades[upg].canBuy())
+                                player.layers[(intlayer + player.last_auto_id) % player.layers.length].upgrades[upg].buy();
+                        player.last_auto_id = (intlayer + player.last_auto_id) % player.layers.length;
                         break;
                     }
-                
+                }
             }, player.AutoUpgrade.interval)
         }
         else clearInterval(AutoUpgradeInterval);
 
-        if (player.AutoAscension.activated){
+        if (player.AutoAscension.activated) {
             clearInterval(AutoAscensionInterval);
             AutoAscensionInterval = setInterval(() => {
                 let node = document.querySelector(".ascensionAvailable");
                 if (!node) return;
-                for (let layer in player.layers)
-                    if (player.layers[(layer+player.last_auto_id)%player.layers.length].nodeEl == node)
-                    {
-                        player.layers[(layer+player.last_auto_id)%player.layers.length].prestige();
-                        player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
+                for (let layer in player.layers) {
+                    let intlayer = parseInt(layer)
+                    if (player.layers[(intlayer + player.last_auto_id) % player.layers.length].nodeEl == node) {
+                        player.layers[(intlayer + player.last_auto_id) % player.layers.length].prestige();
+                        player.last_auto_id = (intlayer + player.last_auto_id) % player.layers.length;
                         break;
                     }
+                }
             }, player.AutoAscension.interval)
         }
         else clearInterval(AutoAscensionInterval);
 
-        if (player.AutoAscension_Zero.activated){
+        if (player.AutoAscension_Zero.activated) {
             clearInterval(AutoZeroInterval);
             AutoZeroInterval = setInterval(() => {
-                for (let layer in player.layers)
-                    if (player.layers[(layer+player.last_auto_id)%player.layers.length].calculateProduction().lte(0)&&player.layers[(layer+player.last_auto_id)%player.layers.length].canPrestige())
-                    {
-                        player.layers[(layer+player.last_auto_id)%player.layers.length].prestige();
-                        player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
+                for (let layer in player.layers) {
+                    let intlayer = parseInt(layer)
+                    if (player.layers[(intlayer + player.last_auto_id) % player.layers.length].calculateProduction().lte(0) && player.layers[(intlayer + player.last_auto_id) % player.layers.length].canPrestige()) {
+                        player.layers[(intlayer + player.last_auto_id) % player.layers.length].prestige();
+                        player.last_auto_id = (intlayer + player.last_auto_id) % player.layers.length;
                         break;
-                    };
+                    }
+                };
             }, player.AutoAscension_Zero.interval)
         }
         else clearInterval(AutoZeroInterval);
 
-        if (player.AutoAscension_More.activated){
+        if (player.AutoAscension_More.activated) {
             clearInterval(AutoMoreInterval);
             AutoMoreInterval = setInterval(() => {
-                for (let layer in player.layers)
-                    if (player.layers[(layer+player.last_auto_id)%player.layers.length].points.times(player.AutoAscension_More.multi).lt(player.layers[(layer+player.last_auto_id)%player.layers.length].prestigeGain())&&!player.layers[(layer+player.last_auto_id)%player.layers.length].right_branch)
-                    {
-                        player.layers[(layer+player.last_auto_id)%player.layers.length].prestige();
-                        player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
+                for (let layer in player.layers) {
+                    let intlayer = parseInt(layer)
+                    if (player.layers[(intlayer + player.last_auto_id) % player.layers.length].points.times(player.AutoAscension_More.multi).lt(player.layers[(intlayer + player.last_auto_id) % player.layers.length].prestigeGain()) && !player.layers[(intlayer + player.last_auto_id) % player.layers.length].right_branch) {
+                        player.layers[(intlayer + player.last_auto_id) % player.layers.length].prestige();
+                        player.last_auto_id = (intlayer + player.last_auto_id) % player.layers.length;
                         break;
-                    };
-            },player.AutoAscension_More.interval)
+                    }
+                };
+            }, player.AutoAscension_More.interval)
         }
         else clearInterval(AutoMoreInterval);
 

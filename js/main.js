@@ -93,17 +93,18 @@ document.getElementById("autoupgrades-toggle").addEventListener("click", () => {
         AutoUpgradeInterval = setInterval(() => {
             let node = document.querySelector(".purchaseAvailable");
             if (!node) return;
-            for (let layer in player.layers)
-                if (player.layers[(layer+player.last_auto_id)%player.layers.length].nodeEl == node)
-                {
-                    player.layers[(layer+player.last_auto_id)%player.layers.length].buyLeft();
-                    player.layers[(layer+player.last_auto_id)%player.layers.length].buyRight();
-                    for (let upg in player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades)
-                        if (!player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades[upg].bought&&player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades[upg].canBuy())
-                        player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades[upg].buy();
-                    player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
+            for (let layer in player.layers) {
+                let intlayer = parseInt(layer)
+                if (player.layers[(intlayer + player.last_auto_id) % player.layers.length].nodeEl == node) {
+                    player.layers[(intlayer + player.last_auto_id) % player.layers.length].buyLeft();
+                    player.layers[(intlayer + player.last_auto_id) % player.layers.length].buyRight();
+                    for (let upg in player.layers[(intlayer + player.last_auto_id) % player.layers.length].upgrades)
+                        if (!player.layers[(intlayer + player.last_auto_id) % player.layers.length].upgrades[upg].bought && player.layers[(intlayer + player.last_auto_id) % player.layers.length].upgrades[upg].canBuy())
+                            player.layers[(intlayer + player.last_auto_id) % player.layers.length].upgrades[upg].buy();
+                    player.last_auto_id = (intlayer + player.last_auto_id) % player.layers.length;
                     break;
                 }
+            }
         }, player.AutoUpgrade.interval)
     }
     else clearInterval(AutoUpgradeInterval);
@@ -135,13 +136,14 @@ document.getElementById("autoascension-toggle").addEventListener("click",() => {
         AutoAscensionInterval = setInterval(() => {
             let node = document.querySelector(".ascensionAvailable");
             if (!node) return;
-            for (let layer in player.layers)
-                if (player.layers[(layer+player.last_auto_id)%player.layers.length].nodeEl == node)
-                {
-                    player.layers[(layer+player.last_auto_id)%player.layers.length].prestige();
-                    player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
+            for (let layer in player.layers) {
+                let intlayer = parseInt(layer)
+                if (player.layers[(intlayer + player.last_auto_id) % player.layers.length].nodeEl == node) {
+                    player.layers[(intlayer + player.last_auto_id) % player.layers.length].prestige();
+                    player.last_auto_id = (intlayer + player.last_auto_id) % player.layers.length;
                     break;
                 }
+            }
         }, player.AutoAscension.interval)
     }
     else clearInterval(AutoAscensionInterval);
@@ -171,13 +173,14 @@ document.getElementById("autozero-toggle").addEventListener("click",() => {
     if (player.AutoAscension_Zero.activated){
         clearInterval(AutoZeroInterval);
         AutoZeroInterval = setInterval(() => {
-            for (let layer in player.layers)
-                if (player.layers[(layer+player.last_auto_id)%player.layers.length].calculateProduction().lte(0)&&player.layers[(layer+player.last_auto_id)%player.layers.length].canPrestige())
-                {
-                    player.layers[(layer+player.last_auto_id)%player.layers.length].prestige();
-                    player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
+            for (let layer in player.layers) {
+                let intlayer = parseInt(layer)
+                if (player.layers[(intlayer + player.last_auto_id) % player.layers.length].calculateProduction().lte(0) && player.layers[(intlayer + player.last_auto_id) % player.layers.length].canPrestige()) {
+                    player.layers[(intlayer + player.last_auto_id) % player.layers.length].prestige();
+                    player.last_auto_id = (intlayer + player.last_auto_id) % player.layers.length;
                     break;
-                };
+                }
+            };
         }, player.AutoAscension_Zero.interval)
     }
     else clearInterval(AutoZeroInterval);
@@ -211,13 +214,14 @@ document.getElementById("automore-toggle").addEventListener("click",() => {
     if (player.AutoAscension_More.activated){
         clearInterval(AutoMoreInterval);
         AutoMoreInterval = setInterval(() => {
-            for (let layer in player.layers)
-                if (player.layers[(layer+player.last_auto_id)%player.layers.length].points.times(player.AutoAscension_More.multi).lt(player.layers[(layer+player.last_auto_id)%player.layers.length].prestigeGain())&&!player.layers[(layer+player.last_auto_id)%player.layers.length].right_branch)
-                {
-                    player.layers[(layer+player.last_auto_id)%player.layers.length].prestige();
-                    player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
+            for (let layer in player.layers) {
+                let intlayer = parseInt(layer)
+                if (player.layers[(intlayer + player.last_auto_id) % player.layers.length].points.times(player.AutoAscension_More.multi).lt(player.layers[(intlayer + player.last_auto_id) % player.layers.length].prestigeGain()) && !player.layers[(intlayer + player.last_auto_id) % player.layers.length].right_branch) {
+                    player.layers[(intlayer + player.last_auto_id) % player.layers.length].prestige();
+                    player.last_auto_id = (intlayer + player.last_auto_id) % player.layers.length;
                     break;
-                };
+                }
+            };
         }, player.AutoAscension_More.interval)
     }
     else clearInterval(AutoMoreInterval);
