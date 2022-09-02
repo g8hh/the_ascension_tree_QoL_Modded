@@ -197,11 +197,11 @@ document.getElementById("automore-toggle").addEventListener("click",() => {
             player.AutoAscension_More.activated = true;
         }
     }
-    const multiinput = window.prompt("Input trigger mult. At least 1.")
+    const multiinput = window.prompt("Input trigger mult. This will determine Auto ascend when prestige gain reaches layer currency mults mult. At least 0.")
     if (multiinput === "") player.AutoAscension_More.multi = 1000;
     else{
         const multinum = parseFloat(multiinput)
-        if (multinum!==NaN) player.AutoAscension_More.multi = Math.max(multinum,1);
+        if (multinum!==NaN) player.AutoAscension_More.multi = Math.max(multinum,0);
     }
 
     document.getElementById("automore-toggle").disabled = !player.AutoAscension_More.unlocked;
