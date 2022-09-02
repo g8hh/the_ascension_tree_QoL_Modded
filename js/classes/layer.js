@@ -306,6 +306,16 @@ class Layer {
         this.nodeEl.className = `tree-node${ascensionAvailable ? ' ascensionAvailable' : ''}${purchaseAvailable ? ' purchaseAvailable' : ''}`;
     }
 
+    purchaseAvailable(){
+        return Object.values(this.upgrades).some(upg => !upg.bought && upg.canBuy()) ||
+        (this.parent_layer != undefined && this.child_left != undefined && this.child_left.points.gte(this.child_left.final_goal) && !this.left_branch) ||
+        (this.parent_layer != undefined && this.child_right != undefined && this.child_right.points.gte(this.child_right.final_goal) && !this.right_branch);
+    }
+
+    ascensionAvailable(){
+        return Object.values(this.upgrades).some(upg => !upg.bought && !upg.canBuy() && this.points.add(this.prestigeGain()).gte(upg.cost));
+    }
+
     screenUpdateCurrent() {
         let layer_container = document.getElementById('layer_info');
 

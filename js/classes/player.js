@@ -137,7 +137,7 @@ class Player {
                 if (!node) return;
                 for (let layer in player.layers) {
                     let intlayer = parseInt(layer)
-                    if (player.layers[(intlayer + player.last_auto_id_upg) % player.layers.length].nodeEl == node) {
+                    if (player.layers[(intlayer + player.last_auto_id_upg) % player.layers.length].purchaseAvailable()) {
                         player.layers[(intlayer + player.last_auto_id_upg) % player.layers.length].buyLeft();
                         player.layers[(intlayer + player.last_auto_id_upg) % player.layers.length].buyRight();
                         for (let upg in player.layers[(intlayer + player.last_auto_id_upg) % player.layers.length].upgrades)
@@ -158,7 +158,7 @@ class Player {
                 if (!node) return;
                 for (let layer in player.layers) {
                     let intlayer = parseInt(layer)
-                    if (player.layers[(intlayer + player.last_auto_id_asc) % player.layers.length].nodeEl == node) {
+                    if (player.layers[(intlayer + player.last_auto_id_asc) % player.layers.length].ascensionAvailable()) {
                         player.layers[(intlayer + player.last_auto_id_asc) % player.layers.length].prestige();
                         player.last_auto_id_asc = (intlayer + player.last_auto_id_asc) % player.layers.length;
                         break;
