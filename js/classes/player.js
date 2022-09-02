@@ -9,22 +9,27 @@ class Player {
         this.AutoAscension = {unlocked:false,activated:false,interval:0};
         this.AutoAscension_Zero = {unlocked:false,activated:false,interval:0};
         this.AutoAscension_More = {unlocked:false,activated:false,interval:0,multi:1000};
+        this.last_auto_id = 0;
     }
 
     reset(seed) {
         clearInterval(AutoAscensionInterval);
         clearInterval(AutoUpgradeInterval);
         clearInterval(AutoZeroInterval);
+        clearInterval(AutoMoreInterval);
         this.AutoUpgrade = {unlocked:false,activated:false,interval:0};
         this.AutoAscension = {unlocked:false,activated:false,interval:0};
         this.AutoAscension_Zero = {unlocked:false,activated:false,interval:0};
         this.AutoAscension_More = {unlocked:false,activated:false,interval:0,multi:1000};
+        this.last_auto_id = 0;
         document.getElementById("autoupgrades-toggle").disabled = !this.AutoUpgrade.unlocked;
         document.getElementById("autoupgrades-toggle").innerText = this.AutoUpgrade.unlocked ? (this.AutoUpgrade.activated?("Enabled\nCurrent: "+this.AutoUpgrade.interval+"ms"):"Disabled") :"Unlock at 1e15 Points"
         document.getElementById("autoascension-toggle").disabled = !this.AutoAscension.unlocked;
         document.getElementById("autoascension-toggle").innerText = this.AutoAscension.unlocked ? (this.AutoAscension.activated?("Enabled\nCurrent: "+this.AutoAscension.interval+"ms"):"Disabled") :"Unlock at 1e30 Points"
         document.getElementById("autozero-toggle").disabled = !this.AutoAscension_Zero.unlocked;
         document.getElementById("autozero-toggle").innerText = this.AutoAscension_Zero.unlocked ? (this.AutoAscension_Zero.activated?("Enabled\nCurrent: "+this.AutoAscension_Zero.interval+"ms"):"Disabled") :"Unlock at 1e45 Points"
+        document.getElementById("automore-toggle").disabled = !this.AutoAscension_More.unlocked;
+        document.getElementById("automore-toggle").innerText = this.AutoAscension_More.unlocked ? (this.AutoAscension_More.activated?("Enabled\nCurrent: "+this.AutoAscension_More.interval+"ms\nTrigger: "+this.AutoAscension_More.multi+"x"):"Disabled") :"Unlock at 1e70 Points"
         this.last_time_ts = Date.now();
 
         this.seed = seed || Math.floor(Math.random() * 4294967296);
@@ -125,13 +130,15 @@ class Player {
                 let node = document.querySelector(".purchaseAvailable");
                 if (!node) return;
                 for (let layer in player.layers)
-                    if (player.layers[layer].nodeEl == node)
+                    if (player.layers[(layer+player.last_auto_id)%player.layers.length].nodeEl == node)
                     {
-                        player.layers[layer].buyLeft();
-                        player.layers[layer].buyRight();
-                        for (let upg in player.layers[layer].upgrades)
-                            if (!player.layers[layer].upgrades[upg].bought&&player.layers[layer].upgrades[upg].canBuy())
-                            player.layers[layer].upgrades[upg].buy();
+                        player.layers[(layer+player.last_auto_id)%player.layers.length].buyLeft();
+                        player.layers[(layer+player.last_auto_id)%player.layers.length].buyRight();
+                        for (let upg in player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades)
+                            if (!player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades[upg].bought&&player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades[upg].canBuy())
+                            player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades[upg].buy();
+                        player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
+                        break;
                     }
                 
             }, player.AutoUpgrade.interval)
@@ -144,9 +151,10 @@ class Player {
                 let node = document.querySelector(".ascensionAvailable");
                 if (!node) return;
                 for (let layer in player.layers)
-                    if (player.layers[layer].nodeEl == node)
+                    if (player.layers[(layer+player.last_auto_id)%player.layers.length].nodeEl == node)
                     {
-                        player.layers[layer].prestige();
+                        player.layers[(layer+player.last_auto_id)%player.layers.length].prestige();
+                        player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
                         break;
                     }
             }, player.AutoAscension.interval)
@@ -157,9 +165,10 @@ class Player {
             clearInterval(AutoZeroInterval);
             AutoZeroInterval = setInterval(() => {
                 for (let layer in player.layers)
-                    if (player.layers[layer].calculateProduction().lte(0)&&player.layers[layer].canPrestige())
+                    if (player.layers[(layer+player.last_auto_id)%player.layers.length].calculateProduction().lte(0)&&player.layers[(layer+player.last_auto_id)%player.layers.length].canPrestige())
                     {
-                        player.layers[layer].prestige();
+                        player.layers[(layer+player.last_auto_id)%player.layers.length].prestige();
+                        player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
                         break;
                     };
             }, player.AutoAscension_Zero.interval)
@@ -170,9 +179,10 @@ class Player {
             clearInterval(AutoMoreInterval);
             AutoMoreInterval = setInterval(() => {
                 for (let layer in player.layers)
-                    if (player.layers[layer].points.times(player.AutoAscension_More.multi).lt(player.layers[layer].prestigeGain())&&!player.layers[layer].right_branch)
+                    if (player.layers[(layer+player.last_auto_id)%player.layers.length].points.times(player.AutoAscension_More.multi).lt(player.layers[(layer+player.last_auto_id)%player.layers.length].prestigeGain())&&!player.layers[(layer+player.last_auto_id)%player.layers.length].right_branch)
                     {
-                        player.layers[layer].prestige();
+                        player.layers[(layer+player.last_auto_id)%player.layers.length].prestige();
+                        player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
                         break;
                     };
             },player.AutoAscension_More.interval)

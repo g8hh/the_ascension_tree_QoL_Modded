@@ -89,20 +89,21 @@ document.getElementById("autoupgrades-toggle").addEventListener("click", () => {
     document.getElementById("autoupgrades-toggle").innerText = player.AutoUpgrade.unlocked ? (player.AutoUpgrade.activated?("Enabled\nCurrent: "+player.AutoUpgrade.interval+"ms"):"Disabled") :"Unlock at 1e15 Points"
 
     if (player.AutoUpgrade.activated){
+        clearInterval(AutoUpgradeInterval)
         AutoUpgradeInterval = setInterval(() => {
-            clearInterval(AutoUpgradeInterval);
             let node = document.querySelector(".purchaseAvailable");
             if (!node) return;
             for (let layer in player.layers)
-                if (player.layers[layer].nodeEl == node)
+                if (player.layers[(layer+player.last_auto_id)%player.layers.length].nodeEl == node)
                 {
-                    player.layers[layer].buyLeft();
-                    player.layers[layer].buyRight();
-                    for (let upg in player.layers[layer].upgrades)
-                        if (!player.layers[layer].upgrades[upg].bought&&player.layers[layer].upgrades[upg].canBuy())
-                        player.layers[layer].upgrades[upg].buy();
+                    player.layers[(layer+player.last_auto_id)%player.layers.length].buyLeft();
+                    player.layers[(layer+player.last_auto_id)%player.layers.length].buyRight();
+                    for (let upg in player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades)
+                        if (!player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades[upg].bought&&player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades[upg].canBuy())
+                        player.layers[(layer+player.last_auto_id)%player.layers.length].upgrades[upg].buy();
+                    player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
+                    break;
                 }
-            
         }, player.AutoUpgrade.interval)
     }
     else clearInterval(AutoUpgradeInterval);
@@ -135,9 +136,10 @@ document.getElementById("autoascension-toggle").addEventListener("click",() => {
             let node = document.querySelector(".ascensionAvailable");
             if (!node) return;
             for (let layer in player.layers)
-                if (player.layers[layer].nodeEl == node)
+                if (player.layers[(layer+player.last_auto_id)%player.layers.length].nodeEl == node)
                 {
-                    player.layers[layer].prestige();
+                    player.layers[(layer+player.last_auto_id)%player.layers.length].prestige();
+                    player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
                     break;
                 }
         }, player.AutoAscension.interval)
@@ -170,9 +172,10 @@ document.getElementById("autozero-toggle").addEventListener("click",() => {
         clearInterval(AutoZeroInterval);
         AutoZeroInterval = setInterval(() => {
             for (let layer in player.layers)
-                if (player.layers[layer].calculateProduction().lte(0)&&player.layers[layer].canPrestige())
+                if (player.layers[(layer+player.last_auto_id)%player.layers.length].calculateProduction().lte(0)&&player.layers[(layer+player.last_auto_id)%player.layers.length].canPrestige())
                 {
-                    player.layers[layer].prestige();
+                    player.layers[(layer+player.last_auto_id)%player.layers.length].prestige();
+                    player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
                     break;
                 };
         }, player.AutoAscension_Zero.interval)
@@ -192,17 +195,15 @@ document.getElementById("automore-toggle").addEventListener("click",() => {
         if (inputNumber <= 0){
             player.AutoAscension_More.interval = 0;
             player.AutoAscension_More.activated = false;
-        } else if (inputNumber !== NaN) {
+        } else if (!isNaN(inputNumber)) {
             player.AutoAscension_More.interval = Math.max(inputNumber,mininterval);;
             player.AutoAscension_More.activated = true;
         }
     }
     const multiinput = window.prompt("Input trigger mult. This will determine Auto ascend when prestige gain reaches layer currency mults mult. At least 0.")
-    if (multiinput === "") player.AutoAscension_More.multi = 1000;
-    else{
-        const multinum = parseFloat(multiinput)
-        if (multinum!==NaN) player.AutoAscension_More.multi = Math.max(multinum,0);
-    }
+    const multinum = parseFloat(multiinput)
+    if (!isNaN(multinum)) player.AutoAscension_More.multi = Math.max(multinum,0);
+    
 
     document.getElementById("automore-toggle").disabled = !player.AutoAscension_More.unlocked;
     document.getElementById("automore-toggle").innerText = player.AutoAscension_More.unlocked ? (player.AutoAscension_More.activated?("Enabled\nCurrent: "+player.AutoAscension_More.interval+"ms\nTrigger: "+player.AutoAscension_More.multi+"x"):"Disabled") :"Unlock at 1e70 Points"
@@ -211,9 +212,10 @@ document.getElementById("automore-toggle").addEventListener("click",() => {
         clearInterval(AutoMoreInterval);
         AutoMoreInterval = setInterval(() => {
             for (let layer in player.layers)
-                if (player.layers[layer].points.times(player.AutoAscension_More.multi).lt(player.layers[layer].prestigeGain())&&!player.layers[layer].right_branch)
+                if (player.layers[(layer+player.last_auto_id)%player.layers.length].points.times(player.AutoAscension_More.multi).lt(player.layers[(layer+player.last_auto_id)%player.layers.length].prestigeGain())&&!player.layers[(layer+player.last_auto_id)%player.layers.length].right_branch)
                 {
-                    player.layers[layer].prestige();
+                    player.layers[(layer+player.last_auto_id)%player.layers.length].prestige();
+                    player.last_auto_id = (layer+player.last_auto_id)%player.layers.length;
                     break;
                 };
         }, player.AutoAscension_More.interval)
