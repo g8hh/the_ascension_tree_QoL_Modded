@@ -77,7 +77,7 @@ class Layer {
 
             //randomize target
             if (this.rng()>Math.max(1-this.depth*0.075,0.5)){
-                let randomdelta = this.rng()*this.depth*0.01-this.depth*0.005
+                let randomdelta = this.rng()*this.depth*0.1-this.depth*0.05
                 this.upgrade_time = this.upgrade_time.times(1+randomdelta)
                 if (this.is_ngminus)
                     this.upgrade_time = this.upgrade_time.max(this.parent_layer.upgrade_time).min(this.parent_layer.upgrade_time.times(3));
@@ -85,7 +85,7 @@ class Layer {
                     this.upgrade_time = this.upgrade_time.max(this.parent_layer.upgrade_time.times(0.5)).min(this.parent_layer.upgrade_time.times(2));
             }
             if (this.rng()>Math.max(1-this.depth*0.025,0.75)){
-                let randomdelta = this.rng()*this.depth*0.05-this.depth*0.025
+                let randomdelta = this.rng()*this.depth*0.2-this.depth*0.1
                 this.final_goal = this.final_goal.pow(1+randomdelta)
                 if (this.is_ngminus)
                     this.final_goal = this.final_goal.max(this.parent_layer.final_goal.pow(-2.5));
