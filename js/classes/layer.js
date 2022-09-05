@@ -60,6 +60,7 @@ class Layer {
 
         if (parent_layer != undefined) {
             this.points_name = choose(ITY_WORDS, this.rng);
+
             //random more color!
             let tempcolormodifier = [-128,-128,-128]
             for (let i = 0; i < 3;i++)
@@ -73,6 +74,24 @@ class Layer {
             tempHexString = HexMinLight(tempHexString,30);
             tempRGBString = HexToRGBString(tempHexString);
             this.color = RGBStringToArray(tempRGBString);
+
+            //randomize target
+            if (this.rng()>Math.max(1-this.depth*0.075,0.5)){
+                let randomdelta = this.rng()*this.depth*0.01-this.depth*0.005
+                this.upgrade_time = this.upgrade_time.times(1+randomdelta)
+                if (this.is_ngminus)
+                    this.upgrade_time = this.upgrade_time.max(this.parent_layer.upgrade_time).min(this.parent_layer.upgrade_time.times(3));
+                else
+                    this.upgrade_time = this.upgrade_time.max(this.parent_layer.upgrade_time.times(0.5)).min(this.parent_layer.upgrade_time.times(2));
+            }
+            if (this.rng()>Math.max(1-this.depth*0.025,0.75)){
+                let randomdelta = this.rng()*this.depth*0.05-this.depth*0.025
+                this.final_goal = this.final_goal.pow(1+randomdelta)
+                if (this.is_ngminus)
+                    this.final_goal = this.final_goal.max(this.parent_layer.final_goal.pow(-2.5));
+                else
+                this.final_goal = this.final_goal.max(this.parent_layer.final_goal);
+            }
         }
 
         this.el = document.createElement("div");
