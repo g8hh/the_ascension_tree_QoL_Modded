@@ -62,35 +62,58 @@ class Layer {
             this.points_name = choose(ITY_WORDS, this.rng);
 
             //random more color!
-            let tempcolormodifier = [-128,-128,-128]
+            let tempcolormodifier = [0,0,0]
             for (let i = 0; i < 3;i++)
             tempcolormodifier[i] += Math.round(this.rng()*256);
-            for (let index in this.color)
-            this.color[index] = Math.max(0,Math.min(this.color[index]+tempcolormodifier[index],255));
+            /*for (let index in this.color)
+            this.color[index] = Math.max(0,Math.min(this.color[index]+tempcolormodifier[index],255));*/
+            this.color = mixColors(this.color,tempcolormodifier);
             //color mixing
-            let tempRGBString = RGBArrayToString(this.color);
-            let tempHexString = RGBToHexString(tempRGBString);
-            tempHexString = HexMaxLight(tempHexString,70);//怎样才算合适
-            tempHexString = HexMinLight(tempHexString,30);
-            tempRGBString = HexToRGBString(tempHexString);
-            this.color = RGBStringToArray(tempRGBString);
+            if (Readability(this.color, [255, 255, 255]) < 1.5)
+                this.color = MostReadable(this.color, [255, 255, 255], 1.5, 0);
+            if (Readability(this.color, [9, 19, 23]) < 1.75)
+                this.color = MostReadable(this.color, [9, 19, 23], 1.75, 1);
 
             //randomize target
             if (this.rng()>Math.max(1-this.depth*0.075,0.5)){
-                let randomdelta = this.rng()*this.depth*0.1-this.depth*0.05
+                /*let randomdelta = this.rng()*this.depth*0.1-this.depth*0.05
                 this.upgrade_time = this.upgrade_time.times(1+randomdelta)
                 if (this.is_ngminus)
                     this.upgrade_time = this.upgrade_time.max(this.parent_layer.upgrade_time).min(this.parent_layer.upgrade_time.times(3));
                 else
-                    this.upgrade_time = this.upgrade_time.max(this.parent_layer.upgrade_time.times(0.5)).min(this.parent_layer.upgrade_time.times(2));
+                    this.upgrade_time = this.upgrade_time.max(this.parent_layer.upgrade_time.times(0.5)).min(this.parent_layer.upgrade_time.times(2));*/
+                let randomodifier = 1/0;
+                if (this.is_ngminus) {
+                    while(randomodifier>3||randomodifier<1){
+                        randomodifier = DeltaRand(2,this.depth*0.1,this.rng());
+                    }
+                 }
+                else {
+                    while(randomodifier>2||randomodifier<0.5){
+                        randomodifier = DeltaRand(1.5,this.depth*0.1,this.rng());
+                    }
+                }
+                this.upgrade_time = this.parent_layer.upgrade_time.times(randomodifier);
             }
             if (this.rng()>Math.max(1-this.depth*0.025,0.75)){
-                let randomdelta = this.rng()*this.depth*0.2-this.depth*0.1
+                /*let randomdelta = this.rng()*this.depth*0.2-this.depth*0.1
                 this.final_goal = this.final_goal.pow(1+randomdelta)
                 if (this.is_ngminus)
                     this.final_goal = this.final_goal.max(this.parent_layer.final_goal.pow(-2.5));
                 else
-                this.final_goal = this.final_goal.max(this.parent_layer.final_goal);
+                this.final_goal = this.final_goal.max(this.parent_layer.final_goal);*/
+                let randomodifier = 1/0;
+                if (this.is_ngminus) {
+                    while(randomodifier<-2.5 || randomodifier == Infinity){
+                        randomodifier = DeltaRand(1.2,this.depth*0.2,this.rng());
+                    }
+                 }
+                else {
+                    while(randomodifier<1 || randomodifier == Infinity){
+                        randomodifier = DeltaRand(2,this.depth*0.2,this.rng());
+                    }
+                }
+                this.final_goal = this.parent_layer.final_goal.pow(randomodifier);
             }
         }
 

@@ -61,6 +61,10 @@ function closeModal() {
     }
 }
 
+function DeltaRand(base,range=0,rand=Math.random()){
+    return base+(rand*range-range/2);
+}
+
 // Simple Fast Counter is a part of PractRand suite by Chris Doty-Humphrey.
 
 function sfc32(a, b, c, d) {
