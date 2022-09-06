@@ -102,14 +102,14 @@ class Layer {
                     this.final_goal = this.final_goal.max(this.parent_layer.final_goal.pow(-2.5));
                 else
                 this.final_goal = this.final_goal.max(this.parent_layer.final_goal);*/
-                let randomodifier = 1/0;
+                let randomodifier = -Infinity;
                 if (this.is_ngminus) {
-                    while(randomodifier<-2.5 || randomodifier == Infinity){
+                    while(randomodifier<-2.5){
                         randomodifier = DeltaRand(1.2,this.depth*0.2,this.rng());
                     }
                  }
                 else {
-                    while(randomodifier<1 || randomodifier == Infinity){
+                    while(randomodifier<1){
                         randomodifier = DeltaRand(2,this.depth*0.2,this.rng());
                     }
                 }
