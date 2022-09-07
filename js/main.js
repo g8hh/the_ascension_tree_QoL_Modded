@@ -49,14 +49,14 @@ document.getElementById("settings-toggle").addEventListener("click", () => {
 });
 document.getElementById("animations-toggle").addEventListener("click", () => {
     player.animations = !player.animations;
-    document.getElementById("animations-toggle").innerText = player.animations ? "Enabled" : "Disabled";
+    player.UpdateSettingButton()
 });
 document.getElementById("singleclick-toggle").addEventListener("click", () => {
     player.singleclick = !player.singleclick;
-    document.getElementById("singleclick-toggle").innerText = player.singleclick ? "Single Click" : "Double Click";
+    player.UpdateSettingButton()
 });
 document.getElementById("hard-reset").addEventListener("click", () => {
-    const input = window.prompt("Input a seed, or leave blank for a random one:");
+    const input = window.prompt(player.isChinese?"输入一个种子, 或者留空来采用随机种子:":"Input a seed, or leave blank for a random one:");
     if (input === "") {
         hard_reset();
     } else {
@@ -70,7 +70,7 @@ document.getElementById("hard-reset").addEventListener("click", () => {
 document.getElementById("autoupgrades-toggle").addEventListener("click", () => {
     let mininterval = new Decimal(60000).div(player.layers[0].points.max(1).log10().sub(15).max(1));
     mininterval = Math.max(Math.round(mininterval.toNumber()),100);
-    const input = window.prompt("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Autobuyer.\nCurrently min interval: "+mininterval+"ms")
+    const input = window.prompt(player.isChinese?("输入自动购买时间间隔(单位毫秒)。留空自动采纳能采用的最小时间间隔。输入零或负数以关闭自动购买器。\n当前可用最小时间间隔: "+mininterval+"ms"):("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Autobuyer.\nCurrently min interval: "+mininterval+"ms"))
     if (input === ""){
         player.AutoUpgrade.interval = mininterval;
         player.AutoUpgrade.activated = true;
@@ -85,8 +85,7 @@ document.getElementById("autoupgrades-toggle").addEventListener("click", () => {
         }
     }
 
-    document.getElementById("autoupgrades-toggle").disabled = !player.AutoUpgrade.unlocked;
-    document.getElementById("autoupgrades-toggle").innerText = player.AutoUpgrade.unlocked ? (player.AutoUpgrade.activated?("Enabled\nCurrent: "+player.AutoUpgrade.interval+"ms"):"Disabled") :"Unlock at 1e15 Points"
+    player.UpdateSettingButton()
 
     if (player.AutoUpgrade.activated){
         clearInterval(AutoUpgradeInterval)
@@ -98,7 +97,7 @@ document.getElementById("autoupgrades-toggle").addEventListener("click", () => {
 document.getElementById("autoascension-toggle").addEventListener("click",() => {
     let mininterval = new Decimal(5*60*1000).div(player.layers[0].points.max(1).log10().sub(30).pow(0.95).max(1));
     mininterval = Math.max(Math.round(mininterval.toNumber()),500);
-    const input = window.prompt("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Auto Ascension.\nCurrently min interval: "+mininterval+"ms")
+    const input = window.prompt(player.isChinese?("输入自动飞升时间间隔(单位毫秒)。留空自动采纳能采用的最小时间间隔。输入零或负数以关闭自动飞升器。\n当前可用最小时间间隔: "+mininterval+"ms"):("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Autobuyer.\nCurrently min interval: "+mininterval+"ms"))
     if (input === ""){
         player.AutoAscension.interval = mininterval;
         player.AutoAscension.activated = true;
@@ -113,8 +112,7 @@ document.getElementById("autoascension-toggle").addEventListener("click",() => {
         }
     }
 
-    document.getElementById("autoascension-toggle").disabled = !player.AutoAscension.unlocked;
-    document.getElementById("autoascension-toggle").innerText = player.AutoAscension.unlocked ? (player.AutoAscension.activated?("Enabled\nCurrent: "+player.AutoAscension.interval+"ms"):"Disabled") :"Unlock at 1e30 Points"
+    player.UpdateSettingButton()
 
     if (player.AutoAscension.activated){
         clearInterval(AutoAscensionInterval);
@@ -126,7 +124,7 @@ document.getElementById("autoascension-toggle").addEventListener("click",() => {
 document.getElementById("autozero-toggle").addEventListener("click",() => {
     let mininterval = new Decimal(7.5*60*1000).div(player.layers[0].points.max(1).log10().sub(45).pow(0.9).max(1));
     mininterval = Math.max(Math.round(mininterval.toNumber()),1000);
-    const input = window.prompt("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Auto Ascension for non-generation layers.\nCurrently min interval: "+mininterval+"ms")
+    const input = window.prompt(player.isChinese?("输入自动飞升时间间隔(单位毫秒)。留空自动采纳能采用的最小时间间隔。输入零或负数以关闭无点数产出层的自动飞升器。\n当前可用最小时间间隔: "+mininterval+"ms"):("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Auto Ascension for non-generation layers.\nCurrently min interval: "+mininterval+"ms"))
     if (input === ""){
         player.AutoAscension_Zero.interval = mininterval;
         player.AutoAscension_Zero.activated = true;
@@ -136,13 +134,12 @@ document.getElementById("autozero-toggle").addEventListener("click",() => {
             player.AutoAscension_Zero.interval = 0;
             player.AutoAscension_Zero.activated = false;
         } else if (!isNaN(inputNumber)) {
-            player.AutoAscension_Zero.interval = Math.max(inputNumber,mininterval);;
+            player.AutoAscension_Zero.interval = Math.max(inputNumber,mininterval);
             player.AutoAscension_Zero.activated = true;
         }
     }
 
-    document.getElementById("autozero-toggle").disabled = !player.AutoAscension_Zero.unlocked;
-    document.getElementById("autozero-toggle").innerText = player.AutoAscension_Zero.unlocked ? (player.AutoAscension_Zero.activated?("Enabled\nCurrent: "+player.AutoAscension_Zero.interval+"ms"):"Disabled") :"Unlock at 1e45 Points"
+    player.UpdateSettingButton()
 
     if (player.AutoAscension_Zero.activated){
         clearInterval(AutoZeroInterval);
@@ -154,7 +151,7 @@ document.getElementById("autozero-toggle").addEventListener("click",() => {
 document.getElementById("automore-toggle").addEventListener("click",() => {
     let mininterval = new Decimal(10*60*1000).div(player.layers[0].points.max(1).log10().sub(70).pow(0.85).max(1));
     mininterval = Math.max(Math.round(mininterval.toNumber()),1000);
-    const input = window.prompt("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Auto Ascension for non-generation layers.\nCurrently min interval: "+mininterval+"ms")
+    const input = window.prompt(player.isChinese?("输入自动飞升时间间隔(单位毫秒)。留空自动采纳能采用的最小时间间隔。输入零或负数以关闭少点数产出层的自动飞升器。\n当前可用最小时间间隔: "+mininterval+"ms"):("Input interval (ms). Leave blank to apply min interval available. Input zero or negative number to disable Auto Ascension for less-prestige-gain layers.\nCurrently min interval: "+mininterval+"ms"))
     if (input === ""){
         player.AutoAscension_More.interval = mininterval;
         player.AutoAscension_More.activated = true;
@@ -164,23 +161,29 @@ document.getElementById("automore-toggle").addEventListener("click",() => {
             player.AutoAscension_More.interval = 0;
             player.AutoAscension_More.activated = false;
         } else if (!isNaN(inputNumber)) {
-            player.AutoAscension_More.interval = Math.max(inputNumber,mininterval);;
+            player.AutoAscension_More.interval = Math.max(inputNumber,mininterval);
             player.AutoAscension_More.activated = true;
         }
     }
-    const multiinput = window.prompt("Input trigger mult. This will determine Auto ascend when prestige gain reaches layer currency mults mult. At least 0.")
+    const multiinput = window.prompt(player.isChinese?"输入触发阈值。当飞升可获得点数达到当前层点数的阈值倍数时自动飞升。最少为0。":"Input trigger mult. This will determine Auto ascend when prestige gain reaches layer currency mults mult. At least 0.")
     const multinum = parseFloat(multiinput)
     if (!isNaN(multinum)) player.AutoAscension_More.multi = Math.max(multinum,0);
     
 
-    document.getElementById("automore-toggle").disabled = !player.AutoAscension_More.unlocked;
-    document.getElementById("automore-toggle").innerText = player.AutoAscension_More.unlocked ? (player.AutoAscension_More.activated?("Enabled\nCurrent: "+player.AutoAscension_More.interval+"ms\nTrigger: "+player.AutoAscension_More.multi+"x"):"Disabled") :"Unlock at 1e70 Points"
+    player.UpdateSettingButton()
 
     if (player.AutoAscension_More.activated){
         clearInterval(AutoMoreInterval);
         AutoMoreInterval = setInterval(MoreIntervalFunc, player.AutoAscension_More.interval)
     }
     else clearInterval(AutoMoreInterval);
+});
+
+document.getElementById("language-toggle").addEventListener("click",()=>{
+    player.isChinese = !player.isChinese;
+    //所有不是每刻叫的闲杂人等全都在这里再更新一遍(qtmd)
+    player.UpdateSettingButton();
+    player.StaticTranslation();
 });
 
 document.addEventListener('keydown', e => {

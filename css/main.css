@@ -12,7 +12,7 @@ body.dark {
 }
 
 * {
-    font-family: 'Recursive', monospace;
+    font-family: 'Recursive',"Microsoft YaHei", monospace;
     color: var(--color-text);
     text-align: center;
 

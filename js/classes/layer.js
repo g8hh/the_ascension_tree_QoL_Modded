@@ -1,5 +1,5 @@
 class Layer {
-    constructor(seed, id=0, parent_layer=undefined, is_ngminus=false) {
+    constructor(seed, id=0, parent_layer=undefined, is_ngminus=false, isChinese=false) {
         this.parent_layer = parent_layer;
         this.is_ngminus = is_ngminus;
 
@@ -68,6 +68,12 @@ class Layer {
             /*for (let index in this.color)
             this.color[index] = Math.max(0,Math.min(this.color[index]+tempcolormodifier[index],255));*/
             this.color = mixColors(this.color,tempcolormodifier);
+            if (this.rng()>0.5&&rgbtohsv(this.color[0],this.color[1],this.color[2])[1]<=50){//提升饱和度
+                let temphsvArray = rgbtohsv(this.color[0],this.color[1],this.color[2]);
+                let randomodifier = DeltaRand(1.5,1,this.rng())
+                temphsvArray[1] = Math.round(temphsvArray[1]*randomodifier)
+                this.color = hsvtorgb(temphsvArray[0],temphsvArray[1],temphsvArray[2]);
+            }
             //color mixing
             if (Readability(this.color, [255, 255, 255]) < 1.5)
                 this.color = MostReadable(this.color, [255, 255, 255], 1.5, 0);
@@ -144,7 +150,9 @@ class Layer {
 
         this.unlockReq = document.createElement("p");
         this.unlockReq.className = "unlock-req";
-        this.unlockReq.innerText = `Get ${formatNumber(this.final_goal)} ${this.points_name ? this.points_name + " points" : "points"} to unlock`;
+        if (player != undefined && player.isChinese) this.unlockReq.innerText = `达到 ${formatNumber(this.final_goal)} ${this.points_name ? this.points_name + " 点数" : "点数"} 以解锁`;
+        else this.unlockReq.innerText = `Get ${formatNumber(this.final_goal)} ${this.points_name ? this.points_name + " points" : "points"} to unlock`;
+        this.unlockReq.setAttribute('layerid',id)
         this.el.appendChild(this.unlockReq);
 
         this.generateUpgrades();
@@ -364,6 +372,7 @@ class Layer {
         layer_container.style.setProperty("--color-layer", formAsRGB(this.color));
 
         layer_container.getElementsByClassName('type')[0].textContent = this.name;
+        if (player.isChinese&&this.name == 'Original') layer_container.getElementsByClassName('type')[0].textContent = '原版游戏'
         layer_container.getElementsByClassName('point-amount')[0].textContent = formatNumber(this.points, true, true);
         layer_container.getElementsByClassName('gain-amount')[0].textContent = formatNumber(this.calculateProduction(this.depth == 0 ? 1 : 0), true);
 
@@ -372,17 +381,6 @@ class Layer {
 
         if (this.parent_layer == undefined) layer_container.getElementsByClassName('boost-to')[0].style.visibility = "hidden";
         else layer_container.getElementsByClassName('boost-to')[0].style.visibility = "";
-
-        for (let element of layer_container.getElementsByClassName('point-name')) {
-            if (this.points_name == "") element.textContent = "points";
-            else element.textContent = this.points_name + " points";
-        }
-
-        for (let element of layer_container.getElementsByClassName('prev-point-name')) {
-            if (this.parent_layer == undefined) element.textContent = "April fools";
-            else if (this.parent_layer.points_name == "") element.textContent = "points";
-            else element.textContent = this.parent_layer.points_name + " points";
-        }
 
         if (this.parent_layer == undefined) layer_container.getElementsByClassName('prestige')[0].style.visibility = "hidden";
         else layer_container.getElementsByClassName('prestige')[0].style.visibility = "";
@@ -394,7 +392,7 @@ class Layer {
             if (this.left_branch) document.getElementById("qol_left").classList.add("complete");
             else document.getElementById("qol_left").classList.remove("complete");
             layer_container.getElementsByClassName('left-child-req')[0].textContent = formatNumber(this.child_left.final_goal, true);
-            layer_container.getElementsByClassName('left-child-name')[0].textContent = this.child_left.points_name + " points";
+            layer_container.getElementsByClassName('left-child-name')[0].textContent = this.child_left.points_name + (player.isChinese?" 点数":" points");
         }
 
         if (this.parent_layer == undefined || this.child_right == undefined) document.getElementById("qol_right").style.visibility = "hidden";
@@ -404,7 +402,7 @@ class Layer {
             if (this.right_branch) document.getElementById("qol_right").classList.add("complete");
             else document.getElementById("qol_right").classList.remove("complete");
             layer_container.getElementsByClassName('right-child-req')[0].textContent = formatNumber(this.child_right.final_goal, true);
-            layer_container.getElementsByClassName('right-child-name')[0].textContent = this.child_right.points_name + " points";
+            layer_container.getElementsByClassName('right-child-name')[0].textContent = this.child_right.points_name + (player.isChinese?" 点数":" points");
         }
 
         if (this.canPrestige()) {
@@ -430,6 +428,17 @@ class Layer {
         for (let key of Object.keys(this.upgrades)) {
             this.upgrades[key].screenUpdate();
         }
+
+        for (let element of layer_container.getElementsByClassName('point-name')) {
+            if (this.points_name == "") element.textContent = player.isChinese?"点数":"points";
+            else element.textContent = this.points_name + (player.isChinese?" 点数":" points");
+        }
+
+        for (let element of layer_container.getElementsByClassName('prev-point-name')) {
+            if (this.parent_layer == undefined) element.textContent = player.isChinese?"愚人节快乐！":"April fools";
+            else if (this.parent_layer.points_name == "") element.textContent = player.isChinese?"点数":"points";
+            else element.textContent = this.parent_layer.points_name + (player.isChinese?" 点数":" points");
+        }
     }
 
     selectLayer(forceZoom, instant = false) {
@@ -438,7 +447,8 @@ class Layer {
 
         let upgrade_elements = "";
         for (let key of Object.keys(this.upgrades)) {
-            upgrade_elements += '<button class="upgrade" id="' + key + '" onclick="player.current_layer.upgrades[this.id].buy()"><div class="content"><p class="upgrade-name">&nbsp;</p><p class="upgrade-desc">' + this.upgrades[key].getDescCode() + '</p><p class="divider"></p><p class="upgrade-cost">Cost: <span class="cost"></span> <span class="point-name"></span></p></div></button>';
+            if (player.isChinese) upgrade_elements += '<button class="upgrade" id="' + key + '" onclick="player.current_layer.upgrades[this.id].buy()"><div class="content"><p class="upgrade-name">&nbsp;</p><p class="upgrade-desc">' + this.upgrades[key].getDescCode() + '</p><p class="divider"></p><p class="upgrade-cost">花费: <span class="cost"></span> <span class="point-name"></span></p></div></button>';
+            else upgrade_elements += '<button class="upgrade" id="' + key + '" onclick="player.current_layer.upgrades[this.id].buy()"><div class="content"><p class="upgrade-name">&nbsp;</p><p class="upgrade-desc">' + this.upgrades[key].getDescCode() + '</p><p class="divider"></p><p class="upgrade-cost">Cost: <span class="cost"></span> <span class="point-name"></span></p></div></button>';
         }
 
         upgrade_container.innerHTML = upgrade_elements;
@@ -583,6 +593,7 @@ class Layer {
 
         this.label.innerText = this.parent_layer === undefined ? "OG" : this.points_name.slice(0, 3);
 
-        this.unlockReq.innerText = `Get ${formatNumber(this.final_goal)} ${this.points_name ? this.points_name + " points" : "points"} to unlock`;
+        this.unlockReq.innerText = player.isChinese?`达到 ${formatNumber(this.final_goal)} ${this.points_name ? this.points_name + " 点数" : "点数"} 以解锁`:`Get ${formatNumber(this.final_goal)} ${this.points_name ? this.points_name + " points" : "points"} to unlock`;
+        this.unlockReq.setAttribute('layerid',this.id)
     }
 };

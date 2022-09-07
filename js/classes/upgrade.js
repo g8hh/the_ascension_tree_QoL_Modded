@@ -85,6 +85,8 @@ class Upgrade {
     screenUpdate() {
         let container = document.getElementById(this.id);
         if (container !== null && container !== undefined) {
+            container.getElementsByClassName("upgrade-desc")[0].innerHTML = this.getDescCode();
+            container.getElementsByClassName("upgrade-cost")[0].childNodes[0].textContent = player.isChinese?"花费: ":"Cost: "
             if (!this.canBuy() || this.bought) container.disabled = true;
             else container.disabled = false;
             if (this.bought) container.classList.add("complete");
@@ -96,17 +98,33 @@ class Upgrade {
     }
 
     getDescCode() {
-        if (this.target == "points") {
-            if (this.type == "add") return 'Get <span class="effect"></span> <span class="point-name"></span> per second';
-            if (this.type == "mul") return 'Get <span class="effect"></span>&times; more <span class="point-name"></span>';
-            if (this.type == "pow") return 'Raise <span class="point-name"></span> gain to the power of <span class="effect"></span>';
-            if (this.type == "mul_log") return 'Boost <span class="point-name"></span> gain based on them<br>Current: <span class="effect"></span>';
-            if (this.type == "mul_pow") return 'Boost <span class="point-name"></span> gain based on them<br>Current: <span class="effect"></span>';
-        }
+        if (player.isChinese) {
+            if (this.target == "points") {
+                if (this.type == "add") return '每秒获得 <span class="effect"></span> <span class="point-name"></span>';
+                if (this.type == "mul") return '获得 <span class="effect"></span>&times; 的更多 <span class="point-name"></span>';
+                if (this.type == "pow") return '将 <span class="point-name"></span> 的获取乘以 <span class="effect"></span> 次幂';
+                if (this.type == "mul_log") return '<span class="point-name"></span> 的获取被其本身增益<br>当前倍率: <span class="effect"></span>';
+                if (this.type == "mul_pow") return '<span class="point-name"></span> 的获取被其本身增益<br>当前倍率: <span class="effect"></span>';
+            }
+            else {
+                if (this.type == "add") return '"' + this.layer.upgrades[this.target].name + '" 升级效果加 <span class="effect"></span>';//疑似没出现
+                if (this.type == "mul") return '"' + this.layer.upgrades[this.target].name + '" 升级增强 <span class="effect"></span>&times;';
+                if (this.type == "pow") return '"' + this.layer.upgrades[this.target].name + '" 升级效果增强 <span class="effect"></span> 次幂';
+            }
+         }
         else {
-            if (this.type == "add") return 'Add <span class="effect"></span> to the power of "' + this.layer.upgrades[this.target].name + '" upgrade';
-            if (this.type == "mul") return '"' + this.layer.upgrades[this.target].name + '" upgrade is <span class="effect"></span>&times; more powerful';
-            if (this.type == "pow") return 'Raise the power of "' + this.layer.upgrades[this.target].name + '" upgrade to the power of <span class="effect"></span>';
+            if (this.target == "points") {
+                if (this.type == "add") return 'Get <span class="effect"></span> <span class="point-name"></span> per second';
+                if (this.type == "mul") return 'Get <span class="effect"></span>&times; more <span class="point-name"></span>';
+                if (this.type == "pow") return 'Raise <span class="point-name"></span> gain to the power of <span class="effect"></span>';
+                if (this.type == "mul_log") return 'Boost <span class="point-name"></span> gain based on them<br>Current: <span class="effect"></span>';
+                if (this.type == "mul_pow") return 'Boost <span class="point-name"></span> gain based on them<br>Current: <span class="effect"></span>';
+            }
+            else {
+                if (this.type == "add") return 'Add <span class="effect"></span> to the power of "' + this.layer.upgrades[this.target].name + '" upgrade';
+                if (this.type == "mul") return '"' + this.layer.upgrades[this.target].name + '" upgrade is <span class="effect"></span>&times; more powerful';
+                if (this.type == "pow") return 'Raise the power of "' + this.layer.upgrades[this.target].name + '" upgrade to the power of <span class="effect"></span>';
+            }
         }
     }
 
