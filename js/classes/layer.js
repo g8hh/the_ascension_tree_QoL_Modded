@@ -1,5 +1,5 @@
 class Layer {
-    constructor(seed, id=0, parent_layer=undefined, is_ngminus=false, isChinese=false) {
+    constructor(seed, id=0, parent_layer=undefined, is_ngminus=false) {
         this.parent_layer = parent_layer;
         this.is_ngminus = is_ngminus;
 
