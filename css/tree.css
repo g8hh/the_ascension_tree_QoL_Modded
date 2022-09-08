@@ -1,0 +1,73 @@
+.tree {
+    position: relative;
+}
+
+.tree-node-container {
+    position: absolute;
+    transform: scale(0.5);
+}
+.tree-node-container::before {
+    content: "";
+    width: 1em;
+    height: 18em;
+    position: absolute;
+    top: -13.5em;
+    background: white;
+    z-index: -1;
+    transform-origin: bottom;
+    transform: rotate(215deg);
+    border-radius: 10px;
+}
+.tree-node-container::after {
+    content: "";
+    width: 1em;
+    height: 18em;
+    position: absolute;
+    top: -13.5em;
+    background: white;
+    z-index: -1;
+    transform-origin: bottom;
+    transform: rotate(147deg);
+    border-radius: 10px;
+}
+
+.tree-node {
+    width: 9em;
+    height: 9em;
+    border-radius: 9em;
+    cursor: pointer;
+    background-color: var(--color-upgrade);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.tree-node:hover {
+    filter: brightness(1.3);
+}
+.tree-node.disabled {
+    background-color: var(--color-upgrade-disabled) !important;
+    filter: none;
+    cursor: auto;
+}
+.tree-node.ascensionAvailable {
+    box-shadow: 0 0 10px 5px lime;
+}
+.tree-node.purchaseAvailable {
+    box-shadow: 0 0 10px 5px salmon;
+}
+
+.node-text {
+    font-size: 3em;
+}
+
+.unlock-req {
+    position: absolute;
+    top: 200%;
+    left: 50%;
+    width: 300%;
+    transform: translate(-50%, 0);
+    padding: 0.5em 1em;
+    background-color: var(--color-info);
+    z-index: 1;
+}

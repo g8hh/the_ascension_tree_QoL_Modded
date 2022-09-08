@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <head>
+        <title>The Ascension Tree</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/css2?family=Recursive:wght,MONO@400..700,1&display=swap" rel="stylesheet">
+        <link rel="apple-touch-icon" sizes="57x57" href="images/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="images/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="images/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="images/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="images/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="images/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="images/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="images/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="images/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192"  href="images/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+        <link rel="manifest" href="manifest.json">
+        <meta name="msapplication-TileColor" content="#74658b">
+        <meta name="msapplication-TileImage" content="images/ms-icon-144x144.png">
+        <meta name="theme-color" content="#74658b">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="application-name" content="Ascension Tree">
+        <meta name="apple-mobile-web-app-title" content="Ascension Tree">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/text.css">
+        <link rel="stylesheet" href="css/layer.css">
+        <link rel="stylesheet" href="css/tree.css">
+        <link rel="stylesheet" href="css/modal.css">
+        <link rel="stylesheet" href="css/mobile.css">
+        <script src="js/break_eternity.min.js" defer></script>
+        <script src="js/panzoom.min.js" defer></script>
+        <script src="js/format_number.js" defer></script>
+        <script src="js/helpers.js" defer></script>
+        <script src="js/data/ity.js" defer></script>
+        <script src="js/data/verbs.js" defer></script>
+        <script src="js/color.js" defer></script>
+        <script src="js/classes/layer.js" defer></script>
+        <script src="js/classes/upgrade.js" defer></script>
+        <script src="js/classes/player.js" defer></script>
+        <script src="js/classes/automation.js" defer></script>
+        <script src="js/player_update.js" defer></script>
+        <script src="js/screen_update.js" defer></script>
+        <script src="js/saveload.js" defer></script>
+        <script src="js/main.js" defer></script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-99TFV78LQ8"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-99TFV78LQ8');
+        </script>
+        <script type="module">
+            import 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate';
+
+            const el = document.createElement('pwa-update');
+            document.body.appendChild(el);
+        </script>
+    </head>
+    <body class="dark">
+        <div class="app">
+            <p class="points">You have <span id="root_points" class="big-number">0</span> points</p>
+            <p class="point-gain">(+<span id="root_gain">1.000</span>/s)</p>
+            <button id="settings-toggle">
+                <img src="images/options_wheel.png" alt="settings" />
+            </button>
+            <span id="settings-container" style="visibility: hidden;">
+                <span class="settings-title">Settings</span><br/>
+                <span class="settings">Focus zoom modifier:<input type="range" min="-3" max="3" value="0" class="slider" id="zoomModifier"></span>
+                <span class="settings">Animations:<button id="animations-toggle">Enabled</button></span>
+                <span class="settings">Focus layer on:<button id="singleclick-toggle">Double Click</button></span>
+                <span class="settings">Auto buy upgrades:<button id="autoupgrades-toggle" disabled="true">Unlock at 1e15 Points</button></span>
+                <span class="settings">Auto ascend when next upgrade avaliable:<button id="autoascension-toggle" disabled="true">Unlock at 1e30 Points</button></span>
+                <span class="settings">Auto ascend when no layer currency gaining:<button id="autozero-toggle" disabled="true">Unlock at 1e45 Points</button></span>
+                <span class="settings">Auto ascend when prestige gain reaches condition:<button id="automore-toggle" disabled="true">Unlock at 1e70 Points</button></span>
+                <span class='button-row'>
+                    <button id="export" class="settings" onclick="openModal('export_modal'); document.getElementById('export_save').value = btoa(JSON.stringify(player.save()))">Export</button>
+                    <button id="import" class="settings" onclick="openModal('import_modal'); document.getElementById('import_save').value = ''">Import</button>
+                </span>
+                <span class="settings" id="seedDisplay">Seed: </span>
+                <button id="hard-reset" class="settings">Hard Reset</button>
+                <span class="settings">Language:<button id="language-toggle">English</button></span>
+                <p>Version 2022-09-06</p>
+            </span>
+            <div class="main-container">
+                <div id="tree-container">
+                    <div class="tree" id="tree"></div>
+                </div>
+                <div id="layer_info">
+                    <div class="layer-header">
+                        <button class="upgrade" id="qol_left" onclick="player.current_layer.buyLeft()">
+                            <div class="content">
+                                <p class="upgrade-desc">Upgrades on this layer are never reset</p>
+                                <p class="divider"></p>
+                                <p class="upgrade-cost">Cost: <span class="left-child-req"></span> <span class="left-child-name"></span></p>
+                            </div>
+                        </button>
+                        <div>
+                            <p class="title">The Ascension Tree</p>
+                            <p class="type">&nbsp;</p>
+                            <p class="points">You have <span class="point-amount big-number">0</span> <span class="point-name"></span></p>
+                            <p class="point-gain">(+<span class="gain-amount"></span>/s)</p>
+                            <p class="boost-from">&times;<span class="boost-from-value"></span> from lower layers</p>
+                            <p class="boost-to">&times;<span class="boost-to-value"></span> to higher layers</p>
+                        </div>
+                        <button class="upgrade" id="qol_right" onclick="player.current_layer.buyRight()">
+                            <div class="content">
+                                <p class="upgrade-desc">Get 100% of gain on ascension per second</p>
+                                <p class="divider"></p>
+                                <p class="upgrade-cost">Cost: <span class="right-child-req"></span> <span class="right-child-name"></span></p>
+                            </div>
+                        </button>
+                    </div>
+                    <button class="prestige" disabled style="visibility: hidden;" onclick="player.current_layer.prestige()">
+                        <p class="cannot-prestige">Ascend<br>Need <span class="prestige-need"></span> <span class="prev-point-name"></span></p>
+                        <p class="can-prestige" style="display: none">Ascend for <span class="prestige-gain"></span> <span class="point-name"></span>
+                        <span class="next-at"><br>Next at <span class="prestige-need"></span> <span class="prev-point-name"></span></span></p>
+                    </button>
+                    <p class="title">Upgrades</p>
+                    <div class="upgrade-container">
+                        <div class="upgrades-list">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span class="credits">
+                QoL Modded Version by cyxw.<br>Want a game with human-generated layers? Check out <a href="http://semenar.ru/matter-dim-test" target="_blank">Matter Dimensions</a> by Semenar, <a href="https://thepaperpilot.org/gamedevtree" target="_blank">Game Dev Tree</a> by thepaperpilot or <a href="https://cyxw.github.io/Arctree" target="_blank">Arctree</a> by cyxw.
+            </span>
+            <div class="modal-container" id="export_modal" style="display: none">
+                <div class="modal">
+                    <p>The following textbox contains your save:</p>
+                    <textarea id="export_save" readonly></textarea>
+                    <button onclick="exportToClipboard()">Copy to clipboard</button>
+                </div>
+                <button class="modal-close" onclick="closeModal()">
+                    <p>&times;</p>
+                </button>
+            </div>
+            <div class="modal-container" id="import_modal" style="display: none">
+                <div class="modal">
+                    <p>Paste your save in the following textbox:</p>
+                    <textarea id="import_save"></textarea>
+                    <button onclick="importFromClipboard()">Paste from clipboard</button>
+                    <button onclick="importSave()">Import</button>
+                </div>
+                <button class="modal-close" onclick="closeModal()">
+                    <p>&times;</p>
+                </button>
+            </div>
+        </div>
+<!--客服 开始-->
+<script src="//g8hh.github.io/static/js/jquery.min.js"></script>
+<link rel="stylesheet" href="//g8hh.github.io/static/css/kf.css" type="text/css" media="screen" charset="utf-8">
+<script src="//g8hh.github.io/static/js/kf.js"></script>
+<!-- 客服 结束 -->
+<!--站长统计-->
+   <div style="display: none"><script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?f237591d5976f87ca2e06b38c3658d9c";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+    </div>
+    </body>
+</html>
